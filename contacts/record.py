@@ -1,21 +1,22 @@
-from .fields import Name, Phone, Birthday   
+from .fields import Email, Name, Phone, Birthday   
 
 class Record:
     """
     Клас для зберігання інформації про контакт:
-    ім'я, список телефонів і день народження.
+    ім'я, список телефонів, список email-адрес і день народження.
     """
 
     def __init__(self, name: str) -> None:
         self.name = Name(name)
-        self.phones: list[Phone] = []
+        self.phones = set()
+        self.emails = set()
         self.birthday: Birthday | None = None
 
     def add_phone(self, phone: str) -> None:
         """
         Додає телефон до контакту.
         """
-        self.phones.append(Phone(phone))
+        self.phones.add(Phone(phone))
 
     def remove_phone(self, phone: str) -> None:
         """
@@ -36,7 +37,7 @@ class Record:
 
         if phone_to_edit:
             self.phones.remove(phone_to_edit)
-            self.phones.append(Phone(new_phone))
+            self.phones.add(Phone(new_phone))
         else:
             raise ValueError("Номер телефону не знайдено.")
 

@@ -2,7 +2,9 @@ import pickle
 
 from contacts import AddressBook
 
-def save_data(book: AddressBook, filename: str = "addressbook.pkl") -> None:
+DEFAULT_FILENAME = "addressbook.pkl"
+
+def save_data(book: AddressBook, filename: str = DEFAULT_FILENAME) -> None:
     """
     Зберігає адресну книгу у файл за допомогою pickle.
     """
@@ -10,7 +12,7 @@ def save_data(book: AddressBook, filename: str = "addressbook.pkl") -> None:
         pickle.dump(book, file)
 
 
-def load_data(filename: str = "addressbook.pkl") -> AddressBook:
+def load_data(filename: str = DEFAULT_FILENAME) -> AddressBook:
     """
     Завантажує адресну книгу з файлу за допомогою pickle.
     Якщо файл не знайдено, повертає нову порожню адресну книгу.

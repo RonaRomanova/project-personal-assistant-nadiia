@@ -21,17 +21,18 @@ def add_contact(args: list[str], book: AddressBook) -> str:
     """
     Додає новий контакт або телефон до існуючого контакту.
     """
-    name, phone, *_ = args
+    name, *phones = args
     record = book.find(name)
 
-    message = "Contact updated."
+    message = "Контакт оновлено."
 
     if record is None:
         record = Record(name)
         book.add_record(record)
-        message = "Contact added."
+        message = "Контакт додано."
 
-    record.add_phone(phone)
+    for phone in phones:
+        record.add_phone(phone)
     return message
 
 
@@ -47,7 +48,7 @@ def change_contact(args: list[str], book: AddressBook) -> str:
         raise KeyError
 
     record.edit_phone(old_phone, new_phone)
-    return "Contact updated."
+    return "Контакт оновлено."
 
 
 @input_error
@@ -87,7 +88,7 @@ def add_birthday(args: list[str], book: AddressBook) -> str:
         raise KeyError
 
     record.add_birthday(birthday)
-    return "Birthday added."
+    return "День народження додано."
 
 
 @input_error
@@ -102,7 +103,7 @@ def show_birthday(args: list[str], book: AddressBook) -> str:
         raise KeyError
 
     if record.birthday is None:
-        return "Birthday not set."
+        return "День народження не встановлено."
 
     return record.birthday.value
 
