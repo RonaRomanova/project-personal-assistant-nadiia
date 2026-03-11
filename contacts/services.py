@@ -1,19 +1,4 @@
-"""Обробники команд для CLI інтерфейсу.
-
-Цей модуль містить функції обробники команд, які обробляють введення користувача
-та взаємодіють з адресною книгою.
-
-Функції:
-    add_contact: Додає новий контакт або телефон до існуючого контакту.
-    change_contact: Змінює телефон контакту.
-    show_phone: Показує всі телефони контакту.
-    show_all: Показує всі контакти адресної книги.
-    add_birthday: Додає день народження контакту.
-    show_birthday: Показує день народження контакту.
-    birthdays: Показує список найближчих днів народження.
-"""
-
-from contacts import AddressBook, Record, input_error
+from contacts import input_error, Record, AddressBook
 
 
 @input_error
@@ -24,12 +9,12 @@ def add_contact(args: list[str], book: AddressBook) -> str:
     name, phone, *_ = args
     record = book.find(name)
 
-    message = "Contact updated."
+    message = "Контакт оновлено."
 
     if record is None:
         record = Record(name)
         book.add_record(record)
-        message = "Contact added."
+        message = "Контакт додано."
 
     record.add_phone(phone)
     return message
@@ -47,7 +32,7 @@ def change_contact(args: list[str], book: AddressBook) -> str:
         raise KeyError
 
     record.edit_phone(old_phone, new_phone)
-    return "Contact updated."
+    return "Контакт оновлено."
 
 
 @input_error
@@ -87,7 +72,7 @@ def add_birthday(args: list[str], book: AddressBook) -> str:
         raise KeyError
 
     record.add_birthday(birthday)
-    return "Birthday added."
+    return "День народження додано."
 
 
 @input_error
@@ -102,7 +87,7 @@ def show_birthday(args: list[str], book: AddressBook) -> str:
         raise KeyError
 
     if record.birthday is None:
-        return "Birthday not set."
+        return "День народження не встановлено."
 
     return record.birthday.value
 
