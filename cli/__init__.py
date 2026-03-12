@@ -1,30 +1,101 @@
-"""
-Модуль CLI для операцій командного рядка.
+import shlex
+from datetime import datetime
+from collections import defaultdict
 
-Цей модуль надає утиліти для розбору та валідації вводу користувача,
-а також обробники команд для помічника бота.
+def parse_date(value: str) -> str | None:
+    """
+    Перетворює рядок дати з поширених форматів у формат YYYY-MM-DD.
+    Підтримувані формати: DD.MM.YYYY, YYYY-MM-DD, DD/MM/YYYY, MM/DD/YYYY.
+    Повертає нормалізований рядок або None, якщо жоден формат не підійшов.
+    """
+    for fmt in ("%d.%m.%Y", "%Y-%m-%d", "%d/%m/%Y", "%m/%d/%Y"):
+        try:
+            dt = datetime.strptime(value, fmt)
+            return dt.strftime("%Y-%m-%d")
+        except ValueError:
+            continue
+    return None
 
-Функції:
-    parse_input: Розбирає рядок введення користувача на команду та аргументи.
-    add_contact: Додає новий контакт або телефон до існуючого контакту.
-    change_contact: Змінює телефон контакту.
-    show_phone: Показує всі телефони контакту.
-    show_all: Показує всі контакти адресної книги.
-    add_birthday: Додає день народження контакту.
-    show_birthday: Показує день народження контакту.
-    birthdays: Показує список найближчих днів народження.
+def parse_input(user_input: str):
+    """
+    Парсить ввід користувача, підтримуючи множинні значення для ключів через кому.
 
-Приклад:
-    >>> from cli import parse_input, add_contact
-    >>> cmd, args = parse_input("add John 1234567890")
-    >>> print(cmd, args)
-    add ['John', '1234567890']
-"""
+    Формат: <команда> <ім'я> [key=value1, value2, ...] [key2=value ...]
 
-from .validators import parse_input
+    - <ім'я> обов'язкове, завжди перше після команди (може бути в лапках).
+    - Усі інші параметри мають формат ключ=значення і можуть йти в будь-якому порядку.
+    - Якщо значення містить кому (наприклад, для переліку телефонів або email), воно автоматично 
+      розбивається на окремі значення (пробіли навколо ком ігноруються).
+    - Якщо ключ повторюється в команді, значення об'єднуються.
+    - Для ключів дня народження (`birthday`, `bday`, `день рождения`) значення нормалізується до YYYY-MM-DD.
+
+    Приклад:
+      add "Іван Петров" phone=0971234567, 0671234567 email=ivan@example.com, office@example.com address="вул. Хрещатик, 1" birthday="15.03.1990"
+
+    Повертає:
+      command (str): назва команди в нижньому регістрі.
+      args (list): список позиційних аргументів (завжди містить ім'я, інші позиційні аргументи ігноруються або додаються з попередженням).
+      kwargs (dict): словник ключових аргументів. Для ключів, що мають кілька значень, значенням буде список.
+    """
+    try:
+        parts = shlex.split(user_input)
+    except ValueError:
+        # Якщо лапки незакриті – запасний варіант
+        parts = user_input.split()
+
+    if not parts:
+        return "", [], {}
+
+    command = parts[0].lower()
+
+    # Перший після команди – обов'язкове ім'я
+    if len(parts) < 2:
+        return command, [], {}
+
+    name = parts[1]
+    args = [name]
+
+    raw_kwargs = defaultdict(list)
+
+    # Множина ключів для дня народження (регістронезалежна)
+    birthday_keys = {"birthday", "bday", "день рождения"}
+
+    for part in parts[2:]:
+        if "=" in part:
+            key, value_str = part.split("=", 1)
+
+            # Розбиваємо значення за комами, якщо вони є
+            # Видаляємо зайві пробіли навколо кожної частини
+            values = [v.strip() for v in value_str.split(",") if v.strip()]
+
+            for value in values:
+                # Нормалізація дати, якщо це ключ дня народження
+                if key.lower() in birthday_keys:
+                    normalized = parse_date(value)
+                    if normalized:
+                        value = normalized
+                raw_kwargs[key].append(value)
+        else:
+            # Якщо після імені зустрічається позиційний аргумент, додаємо його до args (не рекомендується)
+            args.append(part)
+
+    # Перетворюємо defaultdict у звичайний dict:
+    # - якщо для ключа одне значення – залишаємо рядок
+    # - якщо більше – залишаємо список
+    kwargs = {}
+    for key, values in raw_kwargs.items():
+        if len(values) == 1:
+            kwargs[key] = values[0]
+        else:
+            kwargs[key] = values
+
+    return command, args, kwargs
+
 from .commands import (
     add_contact,
-    change_contact,
+    edit_phone,
+    edit_email,
+    edit_contact,
     show_phone,
     show_all,
     add_birthday,
@@ -35,7 +106,9 @@ from .commands import (
 __all__ = [
     "parse_input",
     "add_contact",
-    "change_contact",
+    "edit_phone",
+    "edit_email",
+    "edit_contact",
     "show_phone",
     "show_all",
     "add_birthday",

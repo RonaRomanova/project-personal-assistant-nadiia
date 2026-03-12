@@ -14,17 +14,65 @@ class Field:
 
 
 class Name(Field):
+
+
     """
+
+
     Клас для зберігання імені контакту.
+
+
     """
+
+
+
+
 
     pass
 
 
-class Phone(Field):
+
+
+
+
+
+
+class Address(Field):
+
+
     """
+
+
+    Клас для зберігання адреси.
+
+
+    """
+
+
+
+
+
+    pass
+
+
+
+
+
+
+
+
+class Phone(Field):
+
+
+    """
+
+
     Клас для зберігання номера телефону.
+
+
     Після нормалізації номер має формат +380XXXXXXXXX (13 символів).
+
+
     """
 
     def __init__(self, value: str) -> None:
@@ -147,9 +195,9 @@ class Birthday(Field):
 
     def __init__(self, value: str) -> None:
         try:
-            birthday_date = datetime.strptime(value, "%d.%m.%Y").date()
+            birthday_date = datetime.strptime(value, "%Y-%m-%d").date()
         except ValueError:
-            raise ValueError("Невірний формат дати. Використовуйте DD.MM.YYYY")
+            raise ValueError("Невірний формат дати. Використовуйте YYYY-MM-DD")
 
         super().__init__(value)
         self.date_value = birthday_date

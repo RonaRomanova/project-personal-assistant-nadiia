@@ -12,18 +12,29 @@
     show_birthday: Показує день народження контакту.
     birthdays: Показує список найближчих днів народження.
 """
-
-from contacts import AddressBook, Record, input_error
+from contacts import AddressBook
+from contacts.decorators import input_error
+from contacts.record import Record
 
 
 @input_error
-def add_contact(args: list[str], book: AddressBook) -> str:
+def add_contact(args: list[str], book: AddressBook, **kwargs) -> str:
     """
-    Додає новий контакт або телефон до існуючого контакту.
+    Додає новий контакт або оновлює існуючий.
+    Приймає ім'я, один або декілька телефонів, email та адресу.
+    Ім'я є обов'язковим.
     """
-    name, *phones = args
-    record = book.find(name)
+    if not args:
+        return "Введіть ім'я контакту."
 
+    name = args[0]
+    phones = args[1:]
+    
+    emails = kwargs.get("email")
+    address = kwargs.get("address")
+    birthday = kwargs.get("birthday")
+    
+    record = book.find(name)
     message = "Контакт оновлено."
 
     if record is None:
@@ -33,11 +44,26 @@ def add_contact(args: list[str], book: AddressBook) -> str:
 
     for phone in phones:
         record.add_phone(phone)
+
+    if isinstance(emails, str):
+        emails = [emails]
+    for email in (emails or []):
+        record.add_email(email)
+
+    # if email:
+    #     record.add_email(email)
+    
+    if address:
+        record.add_address(address)
+    
+    if birthday: 
+        record.add_birthday(birthday)
+        
     return message
 
 
 @input_error
-def change_contact(args: list[str], book: AddressBook) -> str:
+def edit_phone(args: list[str], book: AddressBook, **kwargs) -> str:
     """
     Змінює телефон контакту.
     """
@@ -52,7 +78,42 @@ def change_contact(args: list[str], book: AddressBook) -> str:
 
 
 @input_error
-def show_phone(args: list[str], book: AddressBook) -> str:
+def edit_email(args: list[str], book: AddressBook, **kwargs) -> str:
+    """
+    Змінює email контакту.
+    """
+    name, old_email, new_email = args
+    record = book.find(name)
+
+    if record is None:
+        raise KeyError
+
+    record.edit_email(old_email, new_email)
+    return "Контакт оновлено."
+
+
+@input_error
+def edit_contact(args: list[str], book: AddressBook, **kwargs) -> str:
+    """
+    Редагує день народження або адресу контакту.
+    """
+    name = args[0]
+    record = book.find(name)
+
+    if record is None:
+        raise KeyError
+
+    if "birthday" in kwargs:
+        record.add_birthday(kwargs["birthday"])
+    
+    if "address" in kwargs:
+        record.add_address(kwargs["address"])
+
+    return "Контакт оновлено."
+
+
+@input_error
+def show_phone(args: list[str], book: AddressBook, **kwargs) -> str:
     """
     Показує всі телефони контакту.
     """
@@ -66,7 +127,7 @@ def show_phone(args: list[str], book: AddressBook) -> str:
 
 
 @input_error
-def show_all(book: AddressBook) -> str:
+def show_all(book: AddressBook, **kwargs) -> str:
     """
     Показує всі контакти адресної книги.
     """
@@ -77,7 +138,7 @@ def show_all(book: AddressBook) -> str:
 
 
 @input_error
-def add_birthday(args: list[str], book: AddressBook) -> str:
+def add_birthday(args: list[str], book: AddressBook, **kwargs) -> str:
     """
     Додає день народження контакту.
     """
@@ -92,7 +153,7 @@ def add_birthday(args: list[str], book: AddressBook) -> str:
 
 
 @input_error
-def show_birthday(args: list[str], book: AddressBook) -> str:
+def show_birthday(args: list[str], book: AddressBook, **kwargs) -> str:
     """
     Показує день народження контакту.
     """
@@ -109,7 +170,7 @@ def show_birthday(args: list[str], book: AddressBook) -> str:
 
 
 @input_error
-def birthdays(args: list[str], book: AddressBook) -> str:
+def birthdays(args: list[str], book: AddressBook, **kwargs) -> str:
     """
     Показує список найближчих днів народження.
     """

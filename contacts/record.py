@@ -1,13 +1,15 @@
-from .fields import Email, Name, Phone, Birthday   
+from .fields import Address, Email, Name, Phone, Birthday
+
 
 class Record:
     """
     Клас для зберігання інформації про контакт:
-    ім'я, список телефонів, список email-адрес і день народження.
+    ім'я, адреса, список телефонів, список email-адрес і день народження.
     """
 
     def __init__(self, name: str) -> None:
         self.name = Name(name)
+        self.address: Address | None = None
         self.phones = set()
         self.emails = set()
         self.birthday: Birthday | None = None
@@ -50,6 +52,50 @@ class Record:
                 return contact_phone
         return None
 
+    def add_email(self, email: str) -> None:
+        """
+        Додає email до контакту.
+        """
+        self.emails.add(Email(email))
+
+    def remove_email(self, email: str) -> None:
+        """
+        Видаляє email із контакту.
+        """
+        email_to_remove = self.find_email(email)
+
+        if email_to_remove:
+            self.emails.remove(email_to_remove)
+        else:
+            raise ValueError("Email не знайдено.")
+
+    def edit_email(self, old_email: str, new_email: str) -> None:
+        """
+        Замінює старий email на новий.
+        """
+        email_to_edit = self.find_email(old_email)
+
+        if email_to_edit:
+            self.emails.remove(email_to_edit)
+            self.emails.add(Email(new_email))
+        else:
+            raise ValueError("Email не знайдено.")
+
+    def find_email(self, email: str) -> Email | None:
+        """
+        Шукає email у контакті.
+        """
+        for contact_email in self.emails:
+            if contact_email.value == email:
+                return contact_email
+        return None
+
+    def add_address(self, address: str) -> None:
+        """
+        Додає адресу до контакту.
+        """
+        self.address = Address(address)
+
     def add_birthday(self, birthday: str) -> None:
         """
         Додає день народження до контакту.
@@ -57,10 +103,17 @@ class Record:
         self.birthday = Birthday(birthday)
 
     def __str__(self) -> str:
-        phones_str = "; ".join(phone.value for phone in self.phones)
-        birthday_str = self.birthday.value if self.birthday else "not set"
+        phones_str = "; ".join(p.value for p in self.phones) if self.phones else "не вказано"
+        emails_str = "; ".join(e.value for e in self.emails) if self.emails else "не вказано"
+        birthday_str = self.birthday.value if self.birthday else "не вказано"
+        address_str = self.address.value if self.address else "не вказано"
+
         return (
-            f"Contact name: {self.name.value}, "
-            f"phones: {phones_str}, "
-            f"birthday: {birthday_str}"
+            f"========================================\n"
+            f"  Ім'я: {self.name.value}\n"
+            f"  Адреса: {address_str}\n"
+            f"  Телефони: {phones_str}\n"
+            f"  Emails: {emails_str}\n"
+            f"  День народження: {birthday_str}"
+            
         )

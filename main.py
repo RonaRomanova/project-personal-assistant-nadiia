@@ -1,7 +1,7 @@
 from cli import (
     parse_input,
     add_contact,
-    change_contact,
+    edit_contact,
     show_phone,
     show_all,
     add_birthday,
@@ -20,7 +20,7 @@ def main() -> None:
 
     while True:
         user_input = input("Введіть команду: ")
-        command, args = parse_input(user_input)
+        command, args, kwargs = parse_input(user_input)
 
         if command in ["close", "exit"]:
             print("До побачення!")
@@ -30,28 +30,28 @@ def main() -> None:
             print("Як я можу вам допомогти?")
 
         elif command == "add":
-            print(add_contact(args, book))
+            print(add_contact(args, book, **kwargs))
             save_data(book)
 
         elif command == "change":
-            print(change_contact(args, book))
+            print(edit_contact(args, book, **kwargs))
             save_data(book)
 
         elif command == "phone":
-            print(show_phone(args, book))
+            print(show_phone(args, book, **kwargs))
 
         elif command == "all":
-            print(show_all(book))
+            print(show_all(book, **kwargs))
 
         elif command == "add-birthday":
-            print(add_birthday(args, book))
+            print(add_birthday(args, book, **kwargs))
             save_data(book)
 
         elif command == "show-birthday":
-            print(show_birthday(args, book))
+            print(show_birthday(args, book, **kwargs))
 
         elif command == "birthdays":
-            print(birthdays(args, book))
+            print(birthdays(args, book, **kwargs))
 
         else:
             print("Невірна команда.")
