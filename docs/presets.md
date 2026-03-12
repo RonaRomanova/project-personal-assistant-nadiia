@@ -10,3 +10,5 @@ edit-phone "Elon Musk" +380991234991 +3809912
 edit-email "Elon Musk" doggy@example.com doggy@examplem
 edit-birthday "Elon Musk" 15.03.1971
 edit-address "Elon Musk" "MARS"
+find name="Elon Musk"
+find phone=+380991234999

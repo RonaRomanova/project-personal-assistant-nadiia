@@ -5,6 +5,8 @@ from cli import (
     edit_email, 
     edit_address,
     edit_birthday,
+    find_contact,
+    delete_contact,
     show_all,
     birthdays,
 )
@@ -55,9 +57,14 @@ def main() -> None:
         elif command == "birthdays":
             print(birthdays(args, book, **kwargs))
 
+        elif command == "find":
+            print(find_contact(args, book))
+
+        elif command == "delete":
+            print(delete_contact(args, book))
+
         else:
             print("Невірна команда.")
-
 
 if __name__ == "__main__":
     main()

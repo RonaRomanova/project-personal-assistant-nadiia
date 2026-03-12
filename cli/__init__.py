@@ -86,6 +86,8 @@ from .commands import (
     edit_birthday,
     edit_address,
     birthdays,
+    find_contact,
+    delete_contact,
 )
 
 __all__ = [
@@ -97,4 +99,6 @@ __all__ = [
     "edit_birthday",
     "edit_address",
     "birthdays",
+    "find_contact",
+    "delete_contact",
 ]

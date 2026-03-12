@@ -11,6 +11,9 @@
     add_birthday: Додає день народження контакту.
     birthdays: Показує список найближчих днів народження.
 """
+import email
+import shlex
+
 from contacts import AddressBook
 from contacts.decorators import input_error
 from contacts.record import Record
@@ -145,3 +148,57 @@ def birthdays(args: list[str], book: AddressBook, **kwargs) -> str:
         f"{item['name']}: {item['congratulation_date']}"
         for item in upcoming_birthdays
     )
+
+@input_error
+def find_contact(args: list[str], book: AddressBook) -> str:
+    """
+    Знаходить контакт за ім'ям, телефоном або адресою. Показує всі дані контакту.
+    """
+    arguments = {}  
+    for arg in args:
+        if "=" in arg:
+            key, value = arg.split("=", 1)
+            arguments[key] = value
+        else:
+            arguments["name"] = arg
+
+    result = set()
+    
+    name = arguments.get("name") or args[0] if args else None
+    result.add(book.find(name))
+    
+    phone = arguments.get("phone")
+    if phone:
+        for record in book.data.values():
+            if any(p.value == phone for p in record.phones):
+                result.add(record)
+    
+    email = arguments.get("email")
+    result.add(book.find(email))
+    if email:
+        for record in book.data.values():
+            if any(e.value == email for e in record.emails):
+                result.add(record)
+
+    address = arguments.get("address")
+    if address:
+        for record in book.data.values():
+            if record.address and record.address.value.lower() == address.lower():
+                result.add(record)
+
+    if None in result:
+        result.remove(None)
+
+    if not result:
+        return "Контакт не знайдено."
+
+    return "\n".join(str(record) for record in result)
+
+@input_error
+def delete_contact(args: list[str], book: AddressBook) -> str:
+    """
+    Видаляє контакт за ім'ям.
+    """
+    name = args[0]
+    book.delete(name)
+    return f"Контакт {name} видалено."
