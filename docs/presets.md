@@ -13,3 +13,5 @@ edit-birthday "Elon Musk" 15.03.1971
 edit-address "Elon Musk" "MARS"
 find name="Elon Musk"
 find phone=+380991234999
+
+add-notes testtttt #Urgent #Schedule #Academics #Career #Event #Important #FreeStuff #Money

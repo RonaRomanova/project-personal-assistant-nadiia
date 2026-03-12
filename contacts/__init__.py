@@ -20,7 +20,7 @@
 """
 
 from .address_book import AddressBook
-from .fields import Field, Name, Phone, Birthday
+from .fields import Field, Name, Phone, Birthday, Email, Address
 from .record import Record
 from .decorators import input_error
 
@@ -29,6 +29,8 @@ __all__ = [
     "Field",
     "Name",
     "Phone",
+    "Email",
+    "Address",
     "Birthday",
     "Record",
     "input_error"

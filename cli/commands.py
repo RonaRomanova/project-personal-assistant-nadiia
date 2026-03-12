@@ -17,6 +17,8 @@ import shlex
 from contacts import AddressBook
 from contacts.decorators import input_error
 from contacts.record import Record
+from notes.notebook import Notebook
+
 
 
 @input_error
@@ -202,3 +204,83 @@ def delete_contact(args: list[str], book: AddressBook) -> str:
     name = args[0]
     book.delete(name)
     return f"Контакт {name} видалено."
+
+@input_error
+def add_note(args: list[str], notebook: Notebook, **kwargs) -> str:
+    """
+    Додає нотатку.
+    Формат (через main.py + parse_input):
+      add_note "text of note" [tag1 tag2 ...]
+    """
+    if not args:
+        return ' Введіть текст нотатки. Формат: add_note "text" [tag1 tag2...]'
+
+    text = args[0]
+    tags = args[1:] if len(args) > 1 else []
+
+    note = notebook.add_note(text, tags)
+    tags_str = ", ".join(tags) if tags else "немає"
+    return f"📝 Нотатку #{note.id} додано. Теги: {tags_str}"
+
+
+@input_error
+def do_add_note(self, line):
+        """add-note "text of note" [tag1 tag2 ...] — додає нотатку з текстом і необов'язковими тегами"""
+        
+        if not line:
+            print('Введіть текст нотатки. Формат: add-note "text" [tag1 tag2...]')
+            return
+        # очікуємо формат: "текст нотатки" теги...
+        if '"' not in line:
+            print('Обгорніть текст у лапки: add-note "text" tag1 tag2')
+            return
+        first_quote = line.find('"')
+        last_quote = line.rfind('"')
+        text = line[first_quote + 1:last_quote]
+        tags_part = line[last_quote + 1:].strip()
+        tags = tags_part.split() if tags_part else []
+        
+        note = self.notebook.add_note(text, tags)
+        save_notes(self.notebook)
+        print(f"📝 Нотатку #{note.id} додано. Теги: {', '.join(tags) if tags else 'немає'}")
+    
+def do_search_notes(self, line):
+        """search-notes <query> — пошук по тексту і тегах"""
+        if not line:
+            print("Usage: search-notes <query> - пошук по тексту і тегах")
+            return
+        results = self.notebook.find(line)
+        if not results:
+            print("📭 Нотатки не знайдено")
+            return
+        
+        table = PrettyTable(["ID", "Текст", "Теги"])
+        for n in results:
+            table.add_row([n.id, n.text[:40] + ("..." if len(n.text) > 40 else ""), ", ".join(n.tags)])
+        print(table)
+    
+def do_notes_by_tag(self, line):
+        """notes-by-tag <tag> — нотатки за тегом"""
+        if not line:
+            print("Usage: notes-by-tag <tag> - показує нотатки з вказаним тегом")
+            return
+        results = self.notebook.find_by_tag(line)
+        if not results:
+            print("Нотатки з таким тегом не знайдено")
+            return
+        table = PrettyTable(["ID", "Текст", "Теги"])
+        for n in results:
+            table.add_row([n.id, n.text[:40] + ("..." if len(n.text) > 40 else ""), ", ".join(n.tags)])
+        print(table)
+    
+def do_delete_note(self, line):
+        """delete-note <id> — видалити нотатку за ID"""
+        if not line.isdigit():
+            print("Usage: delete-note <id> - видаляє нотатку за її ID")
+            return
+        note_id = int(line)
+        if self.notebook.delete_note(note_id):
+            save_notes(self.notebook)
+            print(f"🗑️ Нотатку #{note_id} видалено")
+        else:
+            print("Нотатку не знайдено")

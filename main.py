@@ -9,15 +9,18 @@ from cli import (
     delete_contact,
     show_all,
     birthdays,
+    add_note,  # додано для нотаток
 )
-from storage import load_data, save_data
+from storage import load_book, load_notes, save_book, save_notes
 
 
 def main() -> None:
     """
     Основний цикл роботи бота.
     """
-    book = load_data()
+    book = load_book()
+    notes = load_notes()
+
     print(" \nПривіт. Я — Personal Assistant 'NADIIA2'!\n\n" \
           
           "Я не зміню твоє життя за 3 секунди, не пообіцяю “AI magic” і не буду вдавати з себе iPhone 27 Pro Max.\n" \
@@ -50,23 +53,23 @@ def main() -> None:
 
         elif command == "add":
             print(add_contact(args, book, **kwargs))
-            save_data(book)
+            save_book(book)
 
         elif command == "edit-phone":
             print(edit_phone(args, book, **kwargs))
-            save_data(book)
+            save_book(book)
 
         elif command == "edit-email":
             print(edit_email(args, book, **kwargs))
-            save_data(book)
+            save_book(book)
 
         elif command == "edit-birthday":
             print(edit_birthday(args, book, **kwargs))
-            save_data(book)
+            save_book(book)
 
         elif command == "edit-address":
             print(edit_address(args, book, **kwargs))
-            save_data(book)
+            save_book(book)
 
         elif command == "all":
             print(show_all(book, **kwargs))
@@ -79,6 +82,12 @@ def main() -> None:
 
         elif command == "delete":
             print(delete_contact(args, book))
+            save_book(book)
+
+    # Додайте обробку нотаток, якщо потрібно
+        elif command == "add-note":
+            print(add_note(args, notes))
+            save_notes(notes)
 
         else:
             print("Невірна команда.")

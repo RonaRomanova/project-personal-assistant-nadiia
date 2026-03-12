@@ -1,7 +1,10 @@
+from cmd import Cmd
 import shlex
 from collections import defaultdict
+from contacts.address_book import AddressBook
+from storage.file_storage import load_book, load_notes
 from utils.helpers import parse_date
-
+from notes import Notebook, Note
 
 def parse_input(user_input: str):
     """
@@ -88,6 +91,7 @@ from .commands import (
     birthdays,
     find_contact,
     delete_contact,
+    add_note,  # додано для нотаток
 )
 
 __all__ = [
@@ -101,4 +105,14 @@ __all__ = [
     "birthdays",
     "find_contact",
     "delete_contact",
+    "add_note",  # додано для нотаток
 ]
+
+# Основний клас CLI, який буде використовуватися для взаємодії з користувачем
+class NadiiaCLI(Cmd):
+    def __init__(self):
+        super().__init__()
+        self.book = AddressBook()
+        self.notebook = Notebook()
+        load_book(self.book)          # як уже є
+        load_notes(self.notebook)     # додамо нижче
