@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from collections import UserDict
 
 from .record import Record
@@ -30,7 +30,7 @@ class AddressBook(UserDict):
             raise KeyError
 
     @staticmethod
-    def _get_birthday_for_year(birthday: date, year: int) -> date:
+    def _get_birthday_for_year(birthday: str, year: int) -> date:
         """
         Повертає дату дня народження для вказаного року.
         Якщо дата 29.02 і рік не високосний, повертає 28.02.

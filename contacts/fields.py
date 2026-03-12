@@ -1,5 +1,6 @@
 from datetime import datetime
 import re
+from utils.helpers import parse_date
 
 class Field:
     """
@@ -195,7 +196,8 @@ class Birthday(Field):
 
     def __init__(self, value: str) -> None:
         try:
-            birthday_date = datetime.strptime(value, "%Y-%m-%d").date()
+            birthday_date = datetime.strptime(parse_date(value), "%Y-%m-%d").date()     
+            # parse_date(value)
         except ValueError:
             raise ValueError("Невірний формат дати. Використовуйте YYYY-MM-DD")
 

@@ -1,20 +1,7 @@
 import shlex
-from datetime import datetime
 from collections import defaultdict
+from utils.helpers import parse_date
 
-def parse_date(value: str) -> str | None:
-    """
-    Перетворює рядок дати з поширених форматів у формат YYYY-MM-DD.
-    Підтримувані формати: DD.MM.YYYY, YYYY-MM-DD, DD/MM/YYYY, MM/DD/YYYY.
-    Повертає нормалізований рядок або None, якщо жоден формат не підійшов.
-    """
-    for fmt in ("%d.%m.%Y", "%Y-%m-%d", "%d/%m/%Y", "%m/%d/%Y"):
-        try:
-            dt = datetime.strptime(value, fmt)
-            return dt.strftime("%Y-%m-%d")
-        except ValueError:
-            continue
-    return None
 
 def parse_input(user_input: str):
     """
@@ -95,11 +82,9 @@ from .commands import (
     add_contact,
     edit_phone,
     edit_email,
-    edit_contact,
-    show_phone,
     show_all,
-    add_birthday,
-    show_birthday,
+    edit_birthday,
+    edit_address,
     birthdays,
 )
 
@@ -108,10 +93,8 @@ __all__ = [
     "add_contact",
     "edit_phone",
     "edit_email",
-    "edit_contact",
-    "show_phone",
     "show_all",
-    "add_birthday",
-    "show_birthday",
+    "edit_birthday",
+    "edit_address",
     "birthdays",
 ]

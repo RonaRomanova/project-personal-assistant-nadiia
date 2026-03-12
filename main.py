@@ -1,11 +1,11 @@
 from cli import (
     parse_input,
     add_contact,
-    edit_contact,
-    show_phone,
+    edit_phone,
+    edit_email, 
+    edit_address,
+    edit_birthday,
     show_all,
-    add_birthday,
-    show_birthday,
     birthdays,
 )
 from storage import load_data, save_data
@@ -19,7 +19,7 @@ def main() -> None:
     print("Ласкаво просимо в помічника бота!")
 
     while True:
-        user_input = input("Введіть команду: ")
+        user_input = input("\n >>>>>> Введіть команду: ")
         command, args, kwargs = parse_input(user_input)
 
         if command in ["close", "exit"]:
@@ -33,22 +33,24 @@ def main() -> None:
             print(add_contact(args, book, **kwargs))
             save_data(book)
 
-        elif command == "change":
-            print(edit_contact(args, book, **kwargs))
+        elif command == "edit-phone":
+            print(edit_phone(args, book, **kwargs))
             save_data(book)
 
-        elif command == "phone":
-            print(show_phone(args, book, **kwargs))
+        elif command == "edit-email":
+            print(edit_email(args, book, **kwargs))
+            save_data(book)
+
+        elif command == "edit-birthday":
+            print(edit_birthday(args, book, **kwargs))
+            save_data(book)
+
+        elif command == "edit-address":
+            print(edit_address(args, book, **kwargs))
+            save_data(book)
 
         elif command == "all":
             print(show_all(book, **kwargs))
-
-        elif command == "add-birthday":
-            print(add_birthday(args, book, **kwargs))
-            save_data(book)
-
-        elif command == "show-birthday":
-            print(show_birthday(args, book, **kwargs))
 
         elif command == "birthdays":
             print(birthdays(args, book, **kwargs))

@@ -90,17 +90,17 @@ class Record:
                 return contact_email
         return None
 
-    def add_address(self, address: str) -> None:
+    def edit_birthday(self, birthday: str) -> None:
         """
-        Додає адресу до контакту.
-        """
-        self.address = Address(address)
-
-    def add_birthday(self, birthday: str) -> None:
-        """
-        Додає день народження до контакту.
+        Редагує день народження контакту.
         """
         self.birthday = Birthday(birthday)
+
+    def edit_address(self, address: str) -> None:
+        """
+        Редагує адресу контакту.
+        """
+        self.address = Address(address)
 
     def __str__(self) -> str:
         phones_str = "; ".join(p.value for p in self.phones) if self.phones else "не вказано"
