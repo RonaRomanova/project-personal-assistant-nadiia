@@ -61,7 +61,7 @@ def add_contact(args: list[str], book: AddressBook, **kwargs) -> str:
     if birthday: 
         record.edit_birthday(birthday)
         
-    return message
+    return f"{message} Новий запис:\n{record}"
 
 
 @input_error
@@ -100,7 +100,7 @@ def show_all(book: AddressBook, **kwargs) -> str:
     Показує всі контакти адресної книги.
     """
     if not book.data:
-        return "Контактів не збережено."
+        return f"Контактів не збережено. Використайте команду 'add' для додавання першого контакту."
 
     return "\n".join(str(record) for record in book.data.values())
 
@@ -190,7 +190,7 @@ def find_contact(args: list[str], book: AddressBook) -> str:
         result.remove(None)
 
     if not result:
-        return "Контакт не знайдено."
+        return f"Контакт не знайдено. Спробуйте інші параметри пошуку. Формат: find 'Elon Musk' phone=+380991234999 email=asd@example.com address='Mars'"
 
     return "\n".join(str(record) for record in result)
 

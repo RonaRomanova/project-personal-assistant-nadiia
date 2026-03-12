@@ -18,7 +18,10 @@ def main() -> None:
     Основний цикл роботи бота.
     """
     book = load_data()
-    print("Ласкаво просимо в помічника бота!")
+    print(" \nПривіт. Я — Personal Assistant 'NADIIA2'!\n\n" \
+          
+          "Я не зміню твоє життя за 3 секунди, не пообіцяю “AI magic” і не буду вдавати з себе iPhone 27 Pro Max.\n" \
+          "Я просто допоможу тобі з організацією твоїх контактів, введи 'help' щоб побачити всі доступні команди.")
 
     while True:
         user_input = input("\n >>>>>> Введіть команду: ")
@@ -30,6 +33,20 @@ def main() -> None:
 
         elif command == "hello":
             print("Як я можу вам допомогти?")
+        
+        elif command == "help":
+            print("Доступні команди:\n \n" \
+                " - add: Додає новий контакт. Формат: add 'Elon Musk' 0991234999 email=asd@example.com email=asd@example.co birthday=15.03.1971 address='Mars'\n" \
+                " - edit-phone: Редагує номер телефону контакту. Формат: edit-phone 'Elon Musk' +380991234999 +380991234998\n" \
+                " - edit-email: Редагує email контакту. Формат: edit-email 'Elon Musk' asd@example.com new@example.com\n" \
+                " - edit-address: Редагує адресу контакту. Формат: edit-address 'Elon Musk' 'New Address'\n" \
+                " - edit-birthday: Редагує день народження контакту. Формат: edit-birthday 'Elon Musk' 15.03.1971\n" \
+                " - all: Показує всі контакти. Формат: all\n" \
+                " - birthdays: Показує список найближчих днів народження. Формат: birthdays\n" \
+                " - find: Знаходить контакт за ім'ям, телефоном або адресою. Формат: find 'Elon Musk' phone=+380991234999 email=asd@example.com address='Mars'\n" \
+                " - delete: Видаляє контакт за ім'ям. Формат: delete 'Elon Musk'\n" \
+                " - help: Показує це повідомлення. Формат: help\n" \
+                " - close/exit: Завершує роботу бота. Формат: close або exit" )
 
         elif command == "add":
             print(add_contact(args, book, **kwargs))
