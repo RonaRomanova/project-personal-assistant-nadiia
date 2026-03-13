@@ -2,7 +2,7 @@
 
 CLI Personal Assistant "NADIIA2" 🇺🇦
 
-## 🚀 Quick Start
+## 🚀 Quick Start (обов'язково venv!)
 
 ```bash
 git clone https://github.com/RonaRomanova/project-personal-assistant-nadiia.git

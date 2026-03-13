@@ -1,5 +1,6 @@
 from datetime import datetime
 import re
+from utils.helpers import parse_date
 
 class Field:
     """
@@ -14,6 +15,7 @@ class Field:
 
 
 class Name(Field):
+
     """
     Клас для зберігання імені контакту.
     """
@@ -21,7 +23,21 @@ class Name(Field):
     pass
 
 
+
+
+class Address(Field):
+
+    """
+    Клас для зберігання адреси.
+    """
+    
+    pass
+
+
+
+
 class Phone(Field):
+
     """
     Клас для зберігання номера телефону.
     Після нормалізації номер має формат +380XXXXXXXXX (13 символів).
@@ -44,6 +60,9 @@ class Phone(Field):
 
     @staticmethod
     def normalize_phone(phone_number: str) -> str:
+        """
+        Нормалізує номер телефону.
+        """
         # Видаляємо всі символи, крім цифр та символу '+'
         # Це для того, щоб зберегти можливий + на початку, але потім ми все одно беремо тільки цифри.
         cleaned = re.sub(r'[^\d\+]', '', phone_number)
@@ -51,11 +70,9 @@ class Phone(Field):
         # Витягуємо всі цифри (ігноруємо +)
         digits = re.sub(r'\D', '', cleaned)
         
-        # Перевірка мінімальної кількості цифр
+        # Перевірка мінімальної/ максимальної кількості цифр
         if len(digits) < 9:
             raise ValueError("Номер телефону має містити не менше 9 цифр (без урахування коду країни).")
-        
-        # Перевірка максимальної кількості цифр
         if len(digits) > 12:
             raise ValueError("Номер телефону має містити не більше 12 цифр в форматі +380XXXXXXXXX (введено більше).")
         
@@ -66,7 +83,10 @@ class Phone(Field):
                 raise ValueError("Номер з 12 цифр має починатися з коду України 380.")
             normalized = '+' + digits  # додаємо + на початок
         else:
-            # Від 9 до 11 цифр - локальний номер. Перевірка відповідності стандартам
+            # Якщо 9, 10 або 11 цифр - це локальний номер, який ми будемо нормалізувати до формату +380XXXXXXXXX
+            if len(digits) == 9:
+                if digits.startswith('0'):
+                    raise ValueError("Локальний номер з 9 цифр не повинен починатися з 0.")
             if len(digits) == 10 and not digits.startswith('0'):
                 raise ValueError("Номер з 10 цифр має починатися з 0 (наприклад, 0971234567).")
             if len(digits) == 11 and not digits.startswith('80'):
@@ -147,9 +167,10 @@ class Birthday(Field):
 
     def __init__(self, value: str) -> None:
         try:
-            birthday_date = datetime.strptime(value, "%d.%m.%Y").date()
+            birthday_date = datetime.strptime(parse_date(value), "%Y-%m-%d").date()     
+            # parse_date(value)
         except ValueError:
-            raise ValueError("Невірний формат дати. Використовуйте DD.MM.YYYY")
+            raise ValueError("Невірний формат дати. Використовуйте YYYY-MM-DD")
 
         super().__init__(value)
         self.date_value = birthday_date
