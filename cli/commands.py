@@ -13,6 +13,7 @@
 """
 import email
 import shlex
+from datetime import datetime
 
 from contacts import AddressBook
 from cli.validators import input_error
@@ -98,12 +99,46 @@ def edit_email(args: list[str], book: AddressBook, **kwargs) -> str:
 @input_error
 def show_all(book: AddressBook, **kwargs) -> str:
     """
-    Показує всі контакти адресної книги.
+    Показує всі контакти адресної книги у вигляді таблиці. Name | Phone | Email | Birthday | Address
     """
     if not book.data:
         return f"Контактів не збережено. Використайте команду 'add' для додавання першого контакту."
 
-    return "\n".join(str(record) for record in book.data.values())
+    # Створюємо таблицю
+    table = PrettyTable()
+    table.field_names = ["Name", "Phone", "Email", "Birthday", "Address"]
+    
+    # Вирівнювання колонок
+    table.align["Name"] = "l"        # Ліве для імені
+    table.align["Phone"] = "l"       # Ліве для телефону
+    table.align["Email"] = "l"       # Ліве для email
+    table.align["Birthday"] = "c"    # Центр для дати
+    table.align["Address"] = "l"     # Ліве для адреси
+    
+    for record in book.data.values():
+        # Обрізаємо довгі поля
+        name_val = record.name.value
+        name = (name_val[:15] + "..." if len(name_val) > 15 else name_val)
+        
+        # Телефони (конвертуємо сет у список)
+        phones_list = list(record.phones)
+        phone_str = ", ".join(p.value for p in phones_list)
+        phone = (phone_str[:28] + "..." if len(phone_str) > 28 else phone_str) if phone_str else "-" # показуємо до 2 телефонів, потім "..."
+        
+        # Emails
+        emails_list = list(record.emails)
+        email_str = ", ".join(e.value for e in emails_list)
+        email = (email_str[:40] + "..." if len(email_str) > 40 else email_str) if email_str else "-"  # показуємо до 40 символів email, потім "..."
+
+        birthday = record.birthday.value if record.birthday else "-"
+        
+        address_val = record.address.value if record.address else "-"
+        address = (address_val[:40] + "..." if len(address_val) > 40 else address_val) # показуємо до 40 символів адреси, потім "..."
+        
+        table.add_row([name, phone, email, birthday, address])
+    
+    return str(table)
+
 
 
 @input_error
@@ -141,17 +176,33 @@ def edit_address(args: list[str], book: AddressBook, **kwargs) -> str:
 @input_error
 def birthdays(args: list[str], book: AddressBook, **kwargs) -> str:
     """
-    Показує список найближчих днів народження.
+    Показує найближчі дні народження у вигляді таблиці. Формат: Name | Birthday | Days left.
     """
     upcoming_birthdays = book.get_upcoming_birthdays()
 
     if not upcoming_birthdays:
         return "Немає днів народження на наступний тиждень."
+    
+    # Створюємо таблицю
+    table = PrettyTable()
+    table.field_names = ["Name", "Birthday", "Days Left"]
+    table.align["Name"] = "l"        # Ліве вирівнювання для імені
+    table.align["Birthday"] = "c"        # Центр для дати
+    table.align["Days Left"] = "r"   # Право для днів
+    
+    today = datetime.now().date()
+    
+    for item in upcoming_birthdays:
+        # Обрізаємо довге ім'я
+        name_short = (item['name'][:20] + "..." if len(item['name']) > 20 else item['name'])        
+        date_str = item['congratulation_date']
+        date_obj = datetime.strptime(date_str, "%d.%m.%Y").date()
+        days_left = (date_obj - today).days
+        
+        table.add_row([name_short, date_str, days_left])
+    
+    return str(table)
 
-    return "\n".join(
-        f"{item['name']}: {item['congratulation_date']}"
-        for item in upcoming_birthdays
-    )
 
 @input_error
 def find_contact(args: list[str], book: AddressBook) -> str:
