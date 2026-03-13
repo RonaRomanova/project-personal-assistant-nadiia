@@ -10,6 +10,10 @@ from cli import (
     show_all,
     birthdays,
     add_note,  # додано для нотаток
+    edit_note, # додано для нотаток
+    delete_note, # додано для нотаток
+    find_note, # додано для нотаток
+    all_notes, # додано для нотаток
 )
 from storage import load_book, load_notes, save_book, save_notes
 
@@ -49,6 +53,11 @@ def main() -> None:
                 " - find: Знаходить контакт за ім'ям, телефоном або адресою. Формат: find 'Elon Musk' phone=+380991234999 email=asd@example.com address='Mars'\n" \
                 " - delete: Видаляє контакт за ім'ям. Формат: delete 'Elon Musk'\n" \
                 " - help: Показує це повідомлення. Формат: help\n" \
+                " - add-note: Додає нотатку. Формат: add-note \"text\" [tag1 tag2 ...]\n" \
+                " - edit-note: Редагує нотатку. Формат: edit-note <ID> \"new text\"\n" \
+                " - delete-note: Видаляє нотатку. Формат: delete-note <ID>\n" \
+                " - find-note: Шукає нотатки. Формат: find-note <query>\n" \
+                " - all-notes: Показує всі нотатки. Формат: all-notes\n" \
                 " - close/exit: Завершує роботу бота. Формат: close або exit" )
 
         elif command == "add":
@@ -88,6 +97,21 @@ def main() -> None:
         elif command == "add-note":
             print(add_note(args, notes))
             save_notes(notes)
+        
+        elif command == "edit-note":
+            print(edit_note(args, notes))
+            save_notes(notes)
+        
+        elif command == "delete-note":
+            print(delete_note(args, notes))
+            save_notes(notes)
+        
+        elif command == "find-note":
+            print(find_note(args, notes))
+        
+        elif command == "all-notes":
+            print(all_notes(notes))
+
 
         else:
             print("Невірна команда.")

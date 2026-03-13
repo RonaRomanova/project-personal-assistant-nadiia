@@ -205,6 +205,7 @@ def delete_contact(args: list[str], book: AddressBook) -> str:
     book.delete(name)
     return f"Контакт {name} видалено."
 
+
 @input_error
 def add_note(args: list[str], notebook: Notebook, **kwargs) -> str:
     """
@@ -222,65 +223,68 @@ def add_note(args: list[str], notebook: Notebook, **kwargs) -> str:
     tags_str = ", ".join(tags) if tags else "немає"
     return f"📝 Нотатку #{note.id} додано. Теги: {tags_str}"
 
+@input_error
+def edit_note(args: list[str], notebook: Notebook, **kwargs) -> str:
+    """
+    Редагує текст нотатки.
+    Формат: edit-note <ID> "new text"
+    """
+    if len(args) < 2:
+        return "Введіть ID та новий текст нотатки. Формат: edit-note <ID> <text>"
+    
+    try:
+        note_id = int(args[0])
+    except ValueError:
+        return "ID має бути числом."
+
+    new_text = args[1]
+    
+    if notebook.edit_note(note_id, new_text):
+        return f"Нотатку #{note_id} оновлено."
+    else:
+        return "Нотатку не знайдено."
 
 @input_error
-def do_add_note(self, line):
-        """add-note "text of note" [tag1 tag2 ...] — додає нотатку з текстом і необов'язковими тегами"""
-        
-        if not line:
-            print('Введіть текст нотатки. Формат: add-note "text" [tag1 tag2...]')
-            return
-        # очікуємо формат: "текст нотатки" теги...
-        if '"' not in line:
-            print('Обгорніть текст у лапки: add-note "text" tag1 tag2')
-            return
-        first_quote = line.find('"')
-        last_quote = line.rfind('"')
-        text = line[first_quote + 1:last_quote]
-        tags_part = line[last_quote + 1:].strip()
-        tags = tags_part.split() if tags_part else []
-        
-        note = self.notebook.add_note(text, tags)
-        save_notes(self.notebook)
-        print(f"📝 Нотатку #{note.id} додано. Теги: {', '.join(tags) if tags else 'немає'}")
+def delete_note(args: list[str], notebook: Notebook, **kwargs) -> str:
+    """
+    Видаляє нотатку за ID.
+    """
+    if not args:
+        return "Введіть ID нотатки."
     
-def do_search_notes(self, line):
-        """search-notes <query> — пошук по тексту і тегах"""
-        if not line:
-            print("Usage: search-notes <query> - пошук по тексту і тегах")
-            return
-        results = self.notebook.find(line)
-        if not results:
-            print("📭 Нотатки не знайдено")
-            return
-        
-        table = PrettyTable(["ID", "Текст", "Теги"])
-        for n in results:
-            table.add_row([n.id, n.text[:40] + ("..." if len(n.text) > 40 else ""), ", ".join(n.tags)])
-        print(table)
+    try:
+        note_id = int(args[0])
+    except ValueError:
+        return "ID має бути числом."
+
+    if notebook.delete_note(note_id):
+        return f"Нотатку #{note_id} видалено."
+    else:
+        return "Нотатку не знайдено."
+
+@input_error
+def find_note(args: list[str], notebook: Notebook, **kwargs) -> str:
+    """
+    Шукає нотатки за текстом або тегами.
+    """
+    if not args:
+        return "Введіть текст для пошуку."
     
-def do_notes_by_tag(self, line):
-        """notes-by-tag <tag> — нотатки за тегом"""
-        if not line:
-            print("Usage: notes-by-tag <tag> - показує нотатки з вказаним тегом")
-            return
-        results = self.notebook.find_by_tag(line)
-        if not results:
-            print("Нотатки з таким тегом не знайдено")
-            return
-        table = PrettyTable(["ID", "Текст", "Теги"])
-        for n in results:
-            table.add_row([n.id, n.text[:40] + ("..." if len(n.text) > 40 else ""), ", ".join(n.tags)])
-        print(table)
+    query = args[0]
+    matches = notebook.find(query)
     
-def do_delete_note(self, line):
-        """delete-note <id> — видалити нотатку за ID"""
-        if not line.isdigit():
-            print("Usage: delete-note <id> - видаляє нотатку за її ID")
-            return
-        note_id = int(line)
-        if self.notebook.delete_note(note_id):
-            save_notes(self.notebook)
-            print(f"🗑️ Нотатку #{note_id} видалено")
-        else:
-            print("Нотатку не знайдено")
+    if not matches:
+        return "Нотатки не знайдено."
+    
+    return "\n".join(f"#{n.id}: {n.text} [Теги: {', '.join(n.tags)}]" for n in matches)
+
+@input_error
+def all_notes(notebook: Notebook, **kwargs) -> str:
+    """
+    Показує всі нотатки.
+    """
+    notes = notebook.all_notes()
+    if not notes:
+        return "Нотаток немає."
+    
+    return "\n".join(f"#{n.id}: {n.text} [Теги: {', '.join(n.tags)}]" for n in notes)

@@ -92,6 +92,10 @@ from .commands import (
     find_contact,
     delete_contact,
     add_note,  # додано для нотаток
+    edit_note, # додано для нотаток
+    delete_note, # додано для нотаток
+    find_note, # додано для нотаток
+    all_notes, # додано для нотаток
 )
 
 __all__ = [
@@ -106,6 +110,10 @@ __all__ = [
     "find_contact",
     "delete_contact",
     "add_note",  # додано для нотаток
+    "edit_note", # додано для нотаток
+    "delete_note", # додано для нотаток
+    "find_note", # додано для нотаток
+    "all_notes", # додано для нотаток
 ]
 
 # Основний клас CLI, який буде використовуватися для взаємодії з користувачем
