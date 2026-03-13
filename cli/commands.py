@@ -29,14 +29,11 @@ from storage.file_storage import save_notes
 @input_error
 def add_contact(args: list[str], book: AddressBook, **kwargs) -> str:
     """
-    Додає новий контакт або оновлює існуючий.
-    Приймає ім'я, один або декілька телефонів, email та адресу.
-    Ім'я є обов'язковим.
+    Додає новий контакт або оновлює існуючий. Приймає ім'я, один або декілька телефонів, email та адресу.
+    Ім'я є обов'язковим. Формат: add <Ім'я> [телефон1] [телефон2] ... [email=email] [address=адреса] [birthday=дата]
     """
-    if not args:
-        return "Введіть ім'я контакту."
-
     name = args[0]
+
     phones = args[1:]
     
     emails = kwargs.get("email")
@@ -58,9 +55,6 @@ def add_contact(args: list[str], book: AddressBook, **kwargs) -> str:
         emails = [emails]
     for email in (emails or []):
         record.add_email(email)
-
-    # if email:
-    #     record.add_email(email)
     
     if address:
         record.edit_address(address)
@@ -74,7 +68,7 @@ def add_contact(args: list[str], book: AddressBook, **kwargs) -> str:
 @input_error
 def edit_phone(args: list[str], book: AddressBook, **kwargs) -> str:
     """
-    Змінює телефон контакту.
+    Змінює телефон контакту. Формат: edit-phone <Ім'я> <старий_телефон> <новий_телефон>
     """
     name, old_phone, new_phone = args
     record = book.find(name)
@@ -89,7 +83,7 @@ def edit_phone(args: list[str], book: AddressBook, **kwargs) -> str:
 @input_error
 def edit_email(args: list[str], book: AddressBook, **kwargs) -> str:
     """
-    Змінює email контакту.
+    Змінює email контакту. Формат: edit-email <Ім'я> <старий_email> <новий_email>
     """
     name, old_email, new_email = args
     record = book.find(name)
@@ -115,7 +109,7 @@ def show_all(book: AddressBook, **kwargs) -> str:
 @input_error
 def edit_birthday(args: list[str], book: AddressBook, **kwargs) -> str:
     """
-    Редагує день народження контакту.
+    Редагує день народження контакту. Формат: edit-birthday <Ім'я> <ДД.ММ.РРРР>
     """
     name, birthday = args
     record = book.find(name)
@@ -129,9 +123,12 @@ def edit_birthday(args: list[str], book: AddressBook, **kwargs) -> str:
 @input_error
 def edit_address(args: list[str], book: AddressBook, **kwargs) -> str:
     """
-    Редагує адресу контакту.
+    Редагує адресу контакту. Формат: edit-address <Ім'я> <Нова адреса>
     """
-    name, address = args
+    name, *address_parts = args
+    if not address_parts: # Адреса має бути введена
+        raise IndexError
+    address = " ".join(address_parts)
     record = book.find(name)
 
     if record is None:
@@ -204,7 +201,7 @@ def find_contact(args: list[str], book: AddressBook) -> str:
 @input_error
 def delete_contact(args: list[str], book: AddressBook) -> str:
     """
-    Видаляє контакт за ім'ям.
+    Видаляє контакт за ім'ям. Формат: delete <Ім'я>
     """
     name = args[0]
     book.delete(name)
@@ -214,13 +211,8 @@ def delete_contact(args: list[str], book: AddressBook) -> str:
 @input_error
 def add_note(args: list[str], notebook: Notebook, **kwargs) -> str:
     """
-    Додає нотатку.
-    Формат (через main.py + parse_input):
-      add_note "text of note" [tag1 tag2 ...]
+    Додає нотатку. Формат: add-note <"текст нотатки"> [тег1] [тег2] ...
     """
-    if not args:
-        return ' Введіть текст нотатки. Формат: add_note "text" [tag1 tag2...]'
-
     text = args[0]
     tags = args[1:] if len(args) > 1 else []
 
@@ -231,12 +223,8 @@ def add_note(args: list[str], notebook: Notebook, **kwargs) -> str:
 @input_error
 def edit_note(args: list[str], notebook: Notebook, **kwargs) -> str:
     """
-    Редагує текст нотатки.
-    Формат: edit-note <ID> "new text"
+    Редагує текст нотатки. Формат: edit-note <ID> <"новий текст">
     """
-    if len(args) < 2:
-        return "Введіть ID та новий текст нотатки. Формат: edit-note <ID> <text>"
-    
     try:
         note_id = int(args[0])
     except ValueError:
@@ -252,17 +240,8 @@ def edit_note(args: list[str], notebook: Notebook, **kwargs) -> str:
 @input_error
 def edit_tag(args: list[str], notebook: Notebook, **kwargs) -> str:
     """
-    Редагує ТЕГИ.
-    • edit-tag <ID> add <tag1> [tag2...]  
-    • edit-tag <ID> delete <tag>
+    Редагує ТЕГИ. Формат: edit-tag <ID> <add|delete> <тег1> [тег2...]
     """
-    if len(args) < 3:
-        return """\
-Ведіть команду для edit-tag у форматі:
-• edit-tag <ID> add shopping urgent
-• edit-tag <ID> delete shopping  
-        """.strip()
-    
     try:
         note_id = int(args[0])
         action = args[1].lower()
@@ -296,11 +275,8 @@ def edit_tag(args: list[str], notebook: Notebook, **kwargs) -> str:
 @input_error
 def delete_note(args: list[str], notebook: Notebook, **kwargs) -> str:
     """
-    Видаляє нотатку за ID.
+    Видаляє нотатку за ID. Формат: delete-note <ID>
     """
-    if not args:
-        return "Введіть ID нотатки."
-    
     try:
         note_id = int(args[0])
     except ValueError:
@@ -314,12 +290,9 @@ def delete_note(args: list[str], notebook: Notebook, **kwargs) -> str:
 @input_error
 def find_note(args: list[str], notebook: Notebook, **kwargs) -> str:
     """
-    Шукає нотатки за текстом або тегами.
+    Шукає нотатки за текстом або тегами. Формат: find-note <пошуковий_запит>
     """
-    if not args:
-        return "Введіть текст для пошуку."
-    
-    query = args[0]
+    query = args[0] 
     matches = notebook.find(query)
     
     if not matches:
