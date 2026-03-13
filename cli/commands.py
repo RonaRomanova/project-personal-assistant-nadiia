@@ -18,6 +18,9 @@ from contacts import AddressBook
 from contacts.decorators import input_error
 from contacts.record import Record
 from notes.notebook import Notebook
+from prettytable import PrettyTable
+from typing import Optional
+
 
 
 
@@ -221,7 +224,7 @@ def add_note(args: list[str], notebook: Notebook, **kwargs) -> str:
 
     note = notebook.add_note(text, tags)
     tags_str = ", ".join(tags) if tags else "немає"
-    return f"📝 Нотатку #{note.id} додано. Теги: {tags_str}"
+    return f"📝 Нотатку #{note.id} {note.text} додано. Теги: {tags_str}"
 
 @input_error
 def edit_note(args: list[str], notebook: Notebook, **kwargs) -> str:
@@ -240,7 +243,7 @@ def edit_note(args: list[str], notebook: Notebook, **kwargs) -> str:
     new_text = args[1]
     
     if notebook.edit_note(note_id, new_text):
-        return f"Нотатку #{note_id} оновлено."
+        return f"Нотатку #{note_id} {new_text} оновлено."
     else:
         return "Нотатку не знайдено."
 
@@ -278,13 +281,29 @@ def find_note(args: list[str], notebook: Notebook, **kwargs) -> str:
     
     return "\n".join(f"#{n.id}: {n.text} [Теги: {', '.join(n.tags)}]" for n in matches)
 
+
 @input_error
 def all_notes(notebook: Notebook, **kwargs) -> str:
     """
-    Показує всі нотатки.
+    Показує всі нотатки у вигляді таблиці.
+    Формат: id | name | tags (#tag1, #tag2)
     """
     notes = notebook.all_notes()
     if not notes:
-        return "Нотаток немає."
+        return "📝 Нотаток немає."
     
-    return "\n".join(f"#{n.id}: {n.text} [Теги: {', '.join(n.tags)}]" for n in notes)
+    # Створюємо таблицю
+    table = PrettyTable()
+    table.field_names = ["ID", "Назва", "Теги"]
+    table.align["Назва"] = "l"      # ліве вирівнювання для тексту
+    table.align["Теги"] = "l"
+    
+    for n in notes:
+        # Теги з # + комами
+        tags_str = ", ".join(f"#{tag}" for tag in n.tags) if n.tags else "немає"
+        # Обрізаємо довгий текст
+        name_short = (n.text[:50] + "..." if len(n.text) > 50 else n.text)
+        
+        table.add_row([n.id, name_short, tags_str])
+    
+    return str(table)
