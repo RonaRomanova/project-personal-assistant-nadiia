@@ -11,6 +11,7 @@ from cli import (
     birthdays,
     add_note,  # додано для нотаток
     edit_note, # додано для нотаток
+    edit_tag, # додано для нотаток
     delete_note, # додано для нотаток
     find_note, # додано для нотаток
     all_notes, # додано для нотаток
@@ -55,6 +56,7 @@ def main() -> None:
                 " - help: Показує це повідомлення. Формат: help\n" \
                 " - add-note: Додає нотатку. Формат: add-note \"text\" [tag1 tag2 ...]\n" \
                 " - edit-note: Редагує нотатку. Формат: edit-note <ID> \"new text\"\n" \
+                " - edit-tag: Редагує теги. Формат: edit-tag <ID> add <tag1> [tag2...] або edit-tag <ID> delete <tag>\n" \
                 " - delete-note: Видаляє нотатку. Формат: delete-note <ID>\n" \
                 " - find-note: Шукає нотатки. Формат: find-note <query>\n" \
                 " - all-notes: Показує всі нотатки. Формат: all-notes\n" \
@@ -100,6 +102,10 @@ def main() -> None:
         
         elif command == "edit-note":
             print(edit_note(args, notes))
+            save_notes(notes)
+
+        elif command == "edit-tag":
+            print(edit_tag(args, notes))
             save_notes(notes)
         
         elif command == "delete-note":

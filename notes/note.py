@@ -21,3 +21,20 @@ class Note:
         """ Пошук по тексту або тегам. """
         q = query.lower()
         return q in self.text.lower() or any(q in t.lower() for t in self.tags)
+
+    def add_tag(self, tag: str) -> bool:
+        """Додає новий тег до нотатки."""
+        t = tag.lower()
+        if t not in self.tags:
+            self.tags.append(t)
+            self.tags.sort()
+            return True
+        return False
+    
+    def delete_tag(self, tag: str) -> bool:
+        """Видаляє тег з нотатки."""
+        t = tag.lower()
+        if t in self.tags:
+            self.tags.remove(t)
+            return True
+        return False

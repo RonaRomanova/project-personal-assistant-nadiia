@@ -21,6 +21,8 @@ from notes.notebook import Notebook
 from prettytable import PrettyTable
 from typing import Optional
 
+from storage.file_storage import save_notes
+
 
 
 
@@ -246,6 +248,50 @@ def edit_note(args: list[str], notebook: Notebook, **kwargs) -> str:
         return f"Нотатку #{note_id} {new_text} оновлено."
     else:
         return "Нотатку не знайдено."
+    
+@input_error
+def edit_tag(args: list[str], notebook: Notebook, **kwargs) -> str:
+    """
+    Редагує ТЕГИ.
+    • edit-tag <ID> add <tag1> [tag2...]  
+    • edit-tag <ID> delete <tag>
+    """
+    if len(args) < 3:
+        return """\
+Ведіть команду для edit-tag у форматі:
+• edit-tag <ID> add shopping urgent
+• edit-tag <ID> delete shopping  
+        """.strip()
+    
+    try:
+        note_id = int(args[0])
+        action = args[1].lower()
+        tags_input = args[2:]
+    except ValueError:
+        return "ID має бути числом."
+    
+    note = notebook._notes.get(note_id)
+    if not note:
+        return f"Нотатку #{note_id} не знайдено."
+    
+    match action:
+        case "add":
+            added = []
+            for tag in tags_input:
+                if note.add_tag(tag):
+                    added.append(tag)
+            return f"Додано: {', '.join(added)} → #{note_id} {note.text} [Теги: {', '.join(note.tags)}]"
+        
+        case "delete":
+            if len(tags_input) != 1:
+                return "Для видалення тегу вкажіть лише один тег. Формат: edit-tag <ID> delete <tag>"
+            if note.delete_tag(tags_input[0]):
+                return f"Видалено '{tags_input[0]}' з #{note_id} {note.text} [Теги: {', '.join(note.tags)}]"
+            return f"Тег '{tags_input[0]}' не знайдено."
+        
+        case _:
+            return f"Дія '{action}': add/delete."
+           
 
 @input_error
 def delete_note(args: list[str], notebook: Notebook, **kwargs) -> str:

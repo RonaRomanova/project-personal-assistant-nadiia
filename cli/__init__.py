@@ -93,6 +93,7 @@ from .commands import (
     delete_contact,
     add_note,  # додано для нотаток
     edit_note, # додано для нотаток
+    edit_tag, # додано для нотаток
     delete_note, # додано для нотаток
     find_note, # додано для нотаток
     all_notes, # додано для нотаток
@@ -111,6 +112,7 @@ __all__ = [
     "delete_contact",
     "add_note",  # додано для нотаток
     "edit_note", # додано для нотаток
+    "edit_tag", # додано для нотаток
     "delete_note", # додано для нотаток
     "find_note", # додано для нотаток
     "all_notes", # додано для нотаток

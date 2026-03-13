@@ -29,6 +29,11 @@ class Notebook:
         note.text = new_text
         return True
     
+    def do_edit_tag(self, line):
+        '''edit-tag <ID> add/delete/set <теги>'''
+        args = line.split()
+        print(self.handler.edit_tag(args, self.notebook))
+    
     def find(self, query: str) -> List[Note]:
         ''' Пошук нотаток за текстом або тегами. '''
         return [n for n in self._notes.values() if n.matches(query)]
