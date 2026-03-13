@@ -15,7 +15,7 @@ import email
 import shlex
 
 from contacts import AddressBook
-from contacts.decorators import input_error
+from cli.validators import input_error
 from contacts.record import Record
 from notes.notebook import Notebook
 from prettytable import PrettyTable
@@ -304,8 +304,7 @@ def find_note(args: list[str], notebook: Notebook, **kwargs) -> str:
 @input_error
 def all_notes(notebook: Notebook, **kwargs) -> str:
     """
-    Показує всі нотатки у вигляді таблиці.
-    Формат: id | name | tags (#tag1, #tag2)
+    Показує всі нотатки у вигляді таблиці. Формат: id | name | tags (#tag1, #tag2)
     """
     notes = notebook.all_notes()
     if not notes:
@@ -313,9 +312,9 @@ def all_notes(notebook: Notebook, **kwargs) -> str:
     
     # Створюємо таблицю
     table = PrettyTable()
-    table.field_names = ["ID", "Назва", "Теги"]
-    table.align["Назва"] = "l"      # ліве вирівнювання для тексту
-    table.align["Теги"] = "l"
+    table.field_names = ["ID", "Notes", "Tags"]
+    table.align["Notes"] = "l"      # ліве вирівнювання для тексту
+    table.align["Tags"] = "l"
     
     for n in notes:
         # Теги з # + комами
