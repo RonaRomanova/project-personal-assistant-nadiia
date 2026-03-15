@@ -2,6 +2,7 @@ from collections import UserDict
 from datetime import date, timedelta
 
 from .record import Record
+from .constants import UKRAINIAN_DATE_FORMAT
 
 
 class AddressBook(UserDict):
@@ -88,7 +89,7 @@ class AddressBook(UserDict):
                     {
                         "name": record.name.value,
                         "congratulation_date": congratulation_date.strftime(
-                            "%d.%m.%Y"
+                            UKRAINIAN_DATE_FORMAT
                         ),
                     }
                 )
