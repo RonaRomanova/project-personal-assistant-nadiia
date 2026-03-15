@@ -1,4 +1,4 @@
-from contacts import input_error, Record, AddressBook
+from contacts import AddressBook, Record, input_error
 
 
 @input_error

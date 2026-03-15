@@ -1,6 +1,4 @@
 from .note import Note
 from .notebook import Notebook
 
-__all__ = [
-    "Note", 
-    "Notebook"]
+__all__ = ["Note", "Notebook"]

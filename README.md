@@ -1,28 +1,109 @@
 # 🏠 Nadiia Personal Assistant
 
-CLI Personal Assistant "NADIIA2" 🇺🇦
+CLI Personal Assistant **"NADIIA2"** 🦄 🇺🇦
 
-## 🚀 Quick Start (обов'язково venv!)
+Потужний консольний бот-помічник для організації ваших контактів та нотаток. Створений з фокусом на простоту, ефективність та сучасний CLI-інтерфейс.
 
+***
+
+## ✨ Можливості (Features)
+
+### 📒 Адресна Книга (Contacts)
+- **Управління:** Додавання, редагування (телефон, email, день народження, адреса) та видалення контактів.
+- **Пошук:** Зручний пошук контактів за ім'ям, телефоном, адресою чи email (команда `find`).
+- **Перегляд:** Виведення всіх контактів у відформатованій таблиці (команда `all`).
+- **Дні народження:** Швидкий перегляд контактів, яких потрібно привітати протягом наступних 7 днів (команда `birthdays`).
+
+### 📝 Нотатки (Notes)
+- **Управління:** Створення, редагування та видалення текстових нотаток.
+- **Теги:** Призначення тегів до нотаток (додавання/видалення) для кращої організації.
+- **Пошук:** Пошук нотаток за текстом або тегами (команда `find-note`).
+- **Перегляд:** Табличний перегляд усіх наявних нотаток (команда `all-notes`).
+
+***
+
+## 🚀 Швидкий Старт (Quick Start)
+
+### 1. Клонування репозиторію
 ```bash
 git clone https://github.com/RonaRomanova/project-personal-assistant-nadiia.git
 cd project-personal-assistant-nadiia
-python -m venv venv
+```
+
+### 2. Створення та активація віртуального середовища (Обов'язково!)
+> **Важливо:** Проєкт повинен запускатися ізольовано у віртуальному середовищі!
+
+**Запуск на Mac/Linux:**
+```bash
+python3 -m venv venv
 source venv/bin/activate
+```
+**Запуск на Windows:**
+```powershell
+python -m venv venv
+.\venv\Scripts\activate
+```
+
+### 3. Встановлення залежностей
+```bash
 pip install -r requirements.txt
+```
+
+### 4. Запуск додатку
+```bash
 python main.py
 ```
+> Після запуску ви можете ввести команду `help`, щоб переглянути список усіх доступних команд та їх формат.
 
-Run unit tests
+***
 
+## 🛠 Залежності та Best Practices
+Проєкт дотримується сучасних Python Best Practices і використовує відповідні інструменти розробки:
+
+- **CLI Інтерфейс:**
+  - `Rich` та `PrettyTable`: Використовуються для створення структурованого та кольорового виводу в терміналі. 
+- **Код стайл та Лінтери (Code Quality):**
+  - Увесь код суворо відповідає стандарту **PEP 8** (обмеження довжини рядків 79 символів, форматування).
+  - Для підтримки стилю використовуються `Ruff`, `Flake8` та `AutoPEP8`.
+- **Тестування:**
+  - Як основний фреймворк для тестів в проєкті налаштований сучасний `pytest` (також підтримується стандартний `unittest`).
+
+### 🔍 Перевірка коду (Для розробників)
+У проєкті налаштований жорсткий контроль якості коду. Перед створенням Pull Request переконайтесь, що ви виконали форматування:
+
+```bash
+# Перевірка на сувору відповідність PEP 8:
+flake8 .
+ruff check .
+
+# Автоматичне виправлення проблем форматування:
+ruff format .
+autopep8 --in-place --recursive .
 ```
-python3 -m unittest discover tests -v
+
+### 🧪 Запуск тестів
+```bash
+pytest tests/ -v
+# Або через стандартну бібліотеку:
+# python -m unittest discover tests -v
 ```
 
-📋 Workflow: git checkout -b feature/add-contacts
+***
 
-Розробка → Тестувальник → PR → Review → Merge
+## 🤝 Внесок у проєкт (Workflow)
 
-📋 Google doc: https://docs.google.com/document/d/1wiksgjxgH3s9s5ZzH8-WpYMi4or5L8XeeicnXfRO8dk/edit?tab=t.0
+Ми дотримуємося стандартного Git Flow:
+1. Створення нової гілки для задачі: `git checkout -b feature/ваша-назва-задачі`
+2. Розробка та локальне тестування. Код повинен успішно проходити перевірки `flake8` / `ruff`.
+3. Передача в тестування та створення Pull Request (PR) на головну гілку.
+4. Code Review від інших розробників.
+5. Merge у головну гілку після апруву.
 
-📋 Agile board: https://trello.com/b/deW9VxgM/project-personal-assistant-nadiia
+**Життєвий цикл задачі:**<br>
+`Розробка` → `Тестувальник` → `Pull Request` → `Code Review` → `Merge`
+
+***
+
+## 🔗 Корисні посилання
+- 📋 [Google Doc з вимогами/ТЗ](https://docs.google.com/document/d/1wiksgjxgH3s9s5ZzH8-WpYMi4or5L8XeeicnXfRO8dk/edit?tab=t.0)
+- 📋 [Agile Board (Trello)](https://trello.com/b/deW9VxgM/project-personal-assistant-nadiia)

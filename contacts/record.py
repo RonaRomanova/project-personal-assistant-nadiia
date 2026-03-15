@@ -1,4 +1,4 @@
-from .fields import Address, Email, Name, Phone, Birthday
+from .fields import Address, Birthday, Email, Name, Phone
 
 
 class Record:
@@ -103,8 +103,16 @@ class Record:
         self.address = Address(address)
 
     def __str__(self) -> str:
-        phones_str = "; ".join(p.value for p in self.phones) if self.phones else "не вказано"
-        emails_str = "; ".join(e.value for e in self.emails) if self.emails else "не вказано"
+        phones_str = (
+            "; ".join(p.value for p in self.phones)
+            if self.phones
+            else "не вказано"
+        )
+        emails_str = (
+            "; ".join(e.value for e in self.emails)
+            if self.emails
+            else "не вказано"
+        )
         birthday_str = self.birthday.value if self.birthday else "не вказано"
         address_str = self.address.value if self.address else "не вказано"
 
@@ -115,5 +123,4 @@ class Record:
             f"  Телефони: {phones_str}\n"
             f"  Emails: {emails_str}\n"
             f"  День народження: {birthday_str}"
-            
         )

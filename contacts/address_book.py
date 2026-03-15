@@ -1,7 +1,8 @@
-from datetime import date, timedelta, datetime
 from collections import UserDict
+from datetime import date, timedelta
 
 from .record import Record
+
 
 class AddressBook(UserDict):
     """
@@ -19,13 +20,17 @@ class AddressBook(UserDict):
         Знаходить запис за ім'ям (точний збіг).
         """
         return self.data.get(name)
-        
+
     def search_by_name(self, partial_name: str) -> list[Record]:
         """
-        Знаходить записи, ім'я яких містить заданий рядок (без урахування регістру).
+        Знаходить записи, ім'я яких містить заданий рядок
+        (без урахування регістру).
         """
-        return [record for name, record in self.data.items() 
-                if partial_name.lower() in name.lower()]
+        return [
+            record
+            for name, record in self.data.items()
+            if partial_name.lower() in name.lower()
+        ]
 
     def delete(self, name: str) -> None:
         """
@@ -60,14 +65,12 @@ class AddressBook(UserDict):
                 continue
 
             birthday_this_year = self._get_birthday_for_year(
-                record.birthday.date_value,
-                today.year
+                record.birthday.date_value, today.year
             )
 
             if birthday_this_year < today:
                 birthday_this_year = self._get_birthday_for_year(
-                    record.birthday.date_value,
-                    today.year + 1
+                    record.birthday.date_value, today.year + 1
                 )
 
             days_difference = (birthday_this_year - today).days
@@ -77,12 +80,16 @@ class AddressBook(UserDict):
 
                 if congratulation_date.weekday() >= 5:
                     days_to_monday = 7 - congratulation_date.weekday()
-                    congratulation_date = congratulation_date + timedelta(days=days_to_monday)
+                    congratulation_date = congratulation_date + timedelta(
+                        days=days_to_monday
+                    )
 
                 upcoming_birthdays.append(
                     {
                         "name": record.name.value,
-                        "congratulation_date": congratulation_date.strftime("%d.%m.%Y"),
+                        "congratulation_date": congratulation_date.strftime(
+                            "%d.%m.%Y"
+                        ),
                     }
                 )
 

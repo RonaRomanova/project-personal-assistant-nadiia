@@ -8,19 +8,22 @@ from notes.note import Note
 
 DEFAULT_FILENAME = "addressbook.json"
 
+
 def save_book(book: AddressBook, filename: str = DEFAULT_FILENAME) -> None:
     """
     Зберігає адресну книгу у файл у форматі JSON.
     """
     data = []
     for record in book.data.values():
-        data.append({
-            "name": record.name.value,
-            "address": record.address.value if record.address else None,
-            "phones": [p.value for p in record.phones],
-            "emails": [e.value for e in record.emails],
-            "birthday": record.birthday.value if record.birthday else None,
-        })
+        data.append(
+            {
+                "name": record.name.value,
+                "address": record.address.value if record.address else None,
+                "phones": [p.value for p in record.phones],
+                "emails": [e.value for e in record.emails],
+                "birthday": record.birthday.value if record.birthday else None,
+            }
+        )
     with open(filename, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=2)
 
@@ -59,8 +62,8 @@ def load_book(filename: str = DEFAULT_FILENAME) -> AddressBook:
     return book
 
 
-
 NOTES_FILE = Path("notes.json")
+
 
 def save_notes(notebook: Notebook) -> None:
     """Зберігає нотатки у файл у форматі JSON."""
@@ -74,6 +77,7 @@ def save_notes(notebook: Notebook) -> None:
         for n in notebook.all_notes()
     ]
     NOTES_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+
 
 def load_notes() -> Notebook:
     """Завантажує нотатки з файлу, якщо він існує."""
