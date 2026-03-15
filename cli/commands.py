@@ -92,12 +92,12 @@ def show_all(book: AddressBook, **kwargs) -> str:
 
     table = Table(title="All Contacts", box=box.ROUNDED)
     table.add_column("Name", style="cyan", header_style="bold cyan")
-    table.add_column("Phone", style="magenta", header_style="bold magenta")
+    table.add_column("Phone", style="dark_orange3", header_style="bold dark_orange3")
     table.add_column("Email", style="yellow", header_style="bold yellow")
     table.add_column("Birthday", justify="center", style="green", header_style="bold green")
     table.add_column("Address", style="blue", header_style="bold blue")
 
-    for record in book.data.values():
+    for record in sorted(book.data.values(), key=lambda x: x.name.value.lower()):
         name = record.name.value
         phones_list = list(record.phones)
         phone = ", ".join(p.value for p in phones_list) or "-"
@@ -139,14 +139,14 @@ def edit_address(args: list[str], book: AddressBook, **kwargs) -> str:
 @input_error
 def birthdays(args: list[str], book: AddressBook, **kwargs) -> str:
     """Показує найближчі дні народження у вигляді таблиці."""
-    upcoming = book.get_upcoming_birthdays()
+    upcoming = sorted(book.get_upcoming_birthdays(), key=lambda x: x["name"].lower())
     if not upcoming:
         return "Немає днів народження на наступний тиждень."
 
     table = Table(title="Upcoming Birthdays", box=box.ROUNDED)
     table.add_column("Name", style="cyan", header_style="bold cyan")
     table.add_column("Birthday", justify="center", style="green", header_style="bold green")
-    table.add_column("Days Left", justify="right", style="magenta", header_style="bold magenta")
+    table.add_column("Days Left", justify="right", style="dark_orange3", header_style="bold dark_orange3")
 
     today = datetime.now().date()
 
@@ -297,8 +297,8 @@ def all_notes(notebook: Notebook, **kwargs) -> str:
 
     table = Table(title="Notebook", box=box.ROUNDED)
     table.add_column("ID", justify="right", style="cyan", header_style="bold cyan")
-    table.add_column("Notes", style="white", header_style="bold white")
-    table.add_column("Tags", style="magenta", header_style="bold magenta")
+    table.add_column("Notes", style="green", header_style="bold green")
+    table.add_column("Tags", style="dark_orange3", header_style="bold dark_orange3")
 
     for n in notes:
         tags_str = (", ".join(f"#{tag}" for tag in n.tags)

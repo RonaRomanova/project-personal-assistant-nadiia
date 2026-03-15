@@ -7,9 +7,9 @@ HELP_TEXT = (
     "[dim italic]Позначення: <обов'язковий>, \\[необов'язковий][/dim italic]\n\n"
     
     "[bold cyan]👤 КОНТАКТИ[/bold cyan]\n"
-    "  [green]• add[/green] - [i]Створення або оновлення контакту.[/i]\n"
-    "    [dim]Формат:[/dim] [white]add <Ім'я> \\[тел1 тел2 ...] \\[email=...] \\[address=...] \\[birthday=...][/white]\n"
-    "    [dim]Приклад:[/dim] [yellow]add 'Elon Musk' 0991234999 email=elon@musk.com[/yellow]\n\n"
+    "  [green]• add-contact[/green] - [i]Створення або оновлення контакту.[/i]\n"
+    "    [dim]Формат:[/dim] [white]add-contact <Ім'я> \\[тел1 тел2 ...] \\[email=...] \\[address=...] \\[birthday=...][/white]\n"
+    "    [dim]Приклад:[/dim] [yellow]add-contact 'Elon Musk' 0991234999 email=elon@musk.com[/yellow]\n\n"
     
     "  [green]• edit-phone[/green] - [i]Зміна номера телефону.[/i]\n"
     "    [dim]Формат:[/dim] [white]edit-phone <Ім'я> <старий_тел> <новий_тел>[/white]\n"
@@ -27,19 +27,19 @@ HELP_TEXT = (
     "    [dim]Формат:[/dim] [white]edit-birthday <Ім'я> <ДД.ММ.РРРР>[/white]\n"
     "    [dim]Приклад:[/dim] [yellow]edit-birthday 'Elon Musk' 28.06.1971[/yellow]\n\n"
     
-    "  [green]• all[/green] - [i]Відображення всіх контактів.[/i]\n"
-    "    [dim]Формат:[/dim] [white]all[/white]\n\n"
+    "  [green]• all-contacts[/green] - [i]Відображення всіх контактів.[/i]\n"
+    "    [dim]Формат:[/dim] [white]all-contacts[/white]\n\n"
     
-    "  [green]• find[/green] - [i]Пошук контакту за будь-яким полем.[/i]\n"
-    "    [dim]Формат:[/dim] [white]find <запит> \\[phone=...] \\[email=...] \\[address=...][/white]\n"
-    "    [dim]Приклад:[/dim] [yellow]find 'Elon'[/yellow]\n\n"
+    "  [green]• find-contact[/green] - [i]Пошук контакту за будь-яким полем.[/i]\n"
+    "    [dim]Формат:[/dim] [white]find-contact <запит> \\[phone=...] \\[email=...] \\[address=...][/white]\n"
+    "    [dim]Приклад:[/dim] [yellow]find-contact 'Elon'[/yellow]\n\n"
     
     "  [green]• birthdays[/green] - [i]Іменинники на найближчі 7 днів.[/i]\n"
     "    [dim]Формат:[/dim] [white]birthdays[/white]\n\n"
     
-    "  [green]• delete[/green] - [i]Видалення контакту.[/i]\n"
-    "    [dim]Формат:[/dim] [white]delete <Ім'я>[/white]\n"
-    "    [dim]Приклад:[/dim] [yellow]delete 'Elon Musk'[/yellow]\n\n"
+    "  [green]• delete-contact[/green] - [i]Видалення контакту.[/i]\n"
+    "    [dim]Формат:[/dim] [white]delete-contact <Ім'я>[/white]\n"
+    "    [dim]Приклад:[/dim] [yellow]delete-contact 'Elon Musk'[/yellow]\n\n"
     
     "[bold cyan]📝 НОТАТКИ[/bold cyan]\n"
     "  [green]• add-note[/green] - [i]Створення нової нотатки.[/i]\n"
@@ -79,7 +79,7 @@ WELCOME_MSG = (
     "твоїх контактів, введи 'help' щоб побачити "
     "всі доступні команди."
 )
-
+HOW_CAN_I_HELP="Як я можу вам допомогти?"
 EXIT_MSG = "До побачення!"
-HELP_PROMPT = "\n [bold magenta]>>>>>> Введіть команду:[/bold magenta] "
+HELP_PROMPT = "\n >>>>>> Введіть команду: "
 UNKNOWN_COMMAND = "Невірна команда."

@@ -88,9 +88,11 @@ def parse_input(user_input: str):
         if "=" in part:
             key, value_str = part.split("=", 1)
 
-            # Розбиваємо значення за комами, якщо вони є
-            # Видаляємо зайві пробіли навколо кожної частини
-            values = [v.strip() for v in value_str.split(",") if v.strip()]
+            # Розбиваємо значення за комами, якщо вони є (крім адреси)
+            if key.lower() == "address":
+                values = [value_str.strip()]
+            else:
+                values = [v.strip() for v in value_str.split(",") if v.strip()]
 
             for value in values:
                 # Нормалізація дати, якщо це ключ дня народження

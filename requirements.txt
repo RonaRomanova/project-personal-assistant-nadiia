@@ -1,5 +1,7 @@
 # Core Dependencies
-rich==13.7.0         # Для красивого, кольорового CLI інтерфейсу
+rich==13.7.0            # Для красивого, кольорового CLI інтерфейсу
+questionary==2.1.0      # Для інтерактивних CLI запитів та автодоповнення
+prompt_toolkit==3.0.45  # Для автодоповнення в prompt
 
 # Development & Testing Dependencies
 autopep8==2.1.1      # Для автоматичного форматування коду за PEP 8
