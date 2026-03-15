@@ -1,5 +1,4 @@
 # Core Dependencies
-prettytable==3.10.0  # Для форматування табличного виводу контактів/нотаток
 rich==13.7.0         # Для красивого, кольорового CLI інтерфейсу
 
 # Development & Testing Dependencies

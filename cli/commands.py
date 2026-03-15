@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from prettytable import PrettyTable
+from rich.table import Table
+from rich import box
 
 from cli.validators import input_error
 from contacts import AddressBook
@@ -89,37 +90,25 @@ def show_all(book: AddressBook, **kwargs) -> str:
             "Використайте команду 'add' для додавання першого контакту."
         )
 
-    table = PrettyTable()
-    fields = ["Name", "Phone", "Email", "Birthday", "Address"]
-    table.field_names = fields
-
-    for field in fields:
-        table.align[field] = "l" if field != "Birthday" else "c"
+    table = Table(title="All Contacts", box=box.ROUNDED)
+    table.add_column("Name", style="cyan", header_style="bold cyan")
+    table.add_column("Phone", style="magenta", header_style="bold magenta")
+    table.add_column("Email", style="yellow", header_style="bold yellow")
+    table.add_column("Birthday", justify="center", style="green", header_style="bold green")
+    table.add_column("Address", style="blue", header_style="bold blue")
 
     for record in book.data.values():
-        name_val = record.name.value
-        name = (name_val[:TABLE_NAME_MAX_WIDTH] + "..."
-                if len(name_val) > TABLE_NAME_MAX_WIDTH else name_val)
-
+        name = record.name.value
         phones_list = list(record.phones)
-        phone_str = ", ".join(p.value for p in phones_list)
-        phone = (phone_str[:TABLE_PHONE_MAX_WIDTH] + "..."
-                 if len(phone_str) > TABLE_PHONE_MAX_WIDTH else phone_str) or "-"
-
+        phone = ", ".join(p.value for p in phones_list) or "-"
         emails_list = list(record.emails)
-        email_str = ", ".join(e.value for e in emails_list)
-        email = (email_str[:TABLE_EMAIL_MAX_WIDTH] + "..."
-                 if len(email_str) > TABLE_EMAIL_MAX_WIDTH else email_str) or "-"
-
+        email = ", ".join(e.value for e in emails_list) or "-"
         birthday = record.birthday.value if record.birthday else "-"
+        address = record.address.value if record.address else "-"
 
-        addr_val = record.address.value if record.address else "-"
-        address = (addr_val[:TABLE_ADDRESS_MAX_WIDTH] + "..."
-                   if len(addr_val) > TABLE_ADDRESS_MAX_WIDTH else addr_val)
+        table.add_row(name, phone, email, birthday, address)
 
-        table.add_row([name, phone, email, birthday, address])
-
-    return str(table)
+    return table
 
 
 @input_error
@@ -154,25 +143,22 @@ def birthdays(args: list[str], book: AddressBook, **kwargs) -> str:
     if not upcoming:
         return "Немає днів народження на наступний тиждень."
 
-    table = PrettyTable()
-    table.field_names = ["Name", "Birthday", "Days Left"]
-    table.align["Name"] = "l"
-    table.align["Birthday"] = "c"
-    table.align["Days Left"] = "r"
+    table = Table(title="Upcoming Birthdays", box=box.ROUNDED)
+    table.add_column("Name", style="cyan", header_style="bold cyan")
+    table.add_column("Birthday", justify="center", style="green", header_style="bold green")
+    table.add_column("Days Left", justify="right", style="magenta", header_style="bold magenta")
 
     today = datetime.now().date()
 
     for item in upcoming:
-        name_val = item["name"]
-        name = (name_val[:TABLE_UPCOMING_NAME_MAX_WIDTH] + "..."
-                if len(name_val) > TABLE_UPCOMING_NAME_MAX_WIDTH else name_val)
+        name = item["name"]
         date_str = item["congratulation_date"]
         date_obj = datetime.strptime(date_str, UKRAINIAN_DATE_FORMAT).date()
-        days_left = (date_obj - today).days
+        days_left = str((date_obj - today).days)
 
-        table.add_row([name, date_str, days_left])
+        table.add_row(name, date_str, days_left)
 
-    return str(table)
+    return table
 
 
 @input_error
@@ -309,15 +295,13 @@ def all_notes(notebook: Notebook, **kwargs) -> str:
     if not notes:
         return NO_NOTES
 
-    table = PrettyTable()
-    table.field_names = ["ID", "Notes", "Tags"]
-    table.align["Notes"] = "l"
-    table.align["Tags"] = "l"
+    table = Table(title="Notebook", box=box.ROUNDED)
+    table.add_column("ID", justify="right", style="cyan", header_style="bold cyan")
+    table.add_column("Notes", style="white", header_style="bold white")
+    table.add_column("Tags", style="magenta", header_style="bold magenta")
 
     for n in notes:
         tags_str = (", ".join(f"#{tag}" for tag in n.tags)
                     if n.tags else NOT_SPECIFIED)
-        name_short = (n.text[:TABLE_NOTE_MAX_WIDTH] + "..."
-                      if len(n.text) > TABLE_NOTE_MAX_WIDTH else n.text)
-        table.add_row([n.id, name_short, tags_str])
-    return str(table)
+        table.add_row(str(n.id), n.text, tags_str)
+    return table
