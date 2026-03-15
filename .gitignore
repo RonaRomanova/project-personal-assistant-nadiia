@@ -12,6 +12,10 @@ __pycache__/
 # Pickle files
 *.pkl
 
+# history files
+.history
+.log
+
 # storage file
 notes.json
 addressbook.json
