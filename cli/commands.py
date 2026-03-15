@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 from rich.table import Table
 from rich import box
@@ -6,6 +7,7 @@ from rich import box
 from cli.validators import input_error
 from contacts import AddressBook
 from contacts.record import Record
+from notes.note import Note
 from notes.notebook import Notebook
 from contacts.constants import (
     UKRAINIAN_DATE_FORMAT,
@@ -20,6 +22,42 @@ from contacts.constants import (
     TABLE_NOTE_MAX_WIDTH,
     TABLE_UPCOMING_NAME_MAX_WIDTH,
 )
+
+
+def render_record(record: Record, title: str = None) -> Table:
+    """Створює Rich Table для відображення одного або декількох контактів."""
+    table = Table(title=title, box=box.ROUNDED)
+    table.add_column("Name", style="cyan", header_style="bold cyan")
+    table.add_column("Phone", style="dark_orange3", header_style="bold dark_orange3")
+    table.add_column("Email", style="yellow", header_style="bold yellow")
+    table.add_column("Birthday", justify="center", style="green", header_style="bold green")
+    table.add_column("Address", style="blue", header_style="bold blue")
+
+    name = record.name.value
+    phone = ", ".join(p.value for p in record.phones) or "-"
+    email = ", ".join(e.value for e in record.emails) or "-"
+    birthday = record.birthday.value if record.birthday else "-"
+    address = record.address.value if record.address else "-"
+
+    table.add_row(name, phone, email, birthday, address)
+    return table
+
+
+def render_notes(notes: List[Note], title: str = None) -> Table:
+    """Створює Rich Table для відображення нотаток."""
+    if not notes:
+        return title or "Нотаток не знайдено."
+
+    table = Table(title=title, box=box.ROUNDED)
+    table.add_column("ID", justify="right", style="cyan", header_style="bold cyan")
+    table.add_column("Notes", style="green", header_style="bold green")
+    table.add_column("Tags", style="dark_orange3", header_style="bold dark_orange3")
+
+    for n in notes:
+        tags_str = (", ".join(f"#{tag}" for tag in n.tags)
+                    if n.tags else NOT_SPECIFIED)
+        table.add_row(str(n.id), n.text, tags_str)
+    return table
 
 
 @input_error
@@ -56,7 +94,7 @@ def add_contact(args: list[str], book: AddressBook, **kwargs) -> str:
     if birthday:
         record.edit_birthday(birthday)
 
-    return f"{message} Новий запис:\n{record}"
+    return render_record(record, title=message)
 
 
 @input_error
@@ -67,7 +105,7 @@ def edit_phone(args: list[str], book: AddressBook, **kwargs) -> str:
     if record is None:
         return CONTACT_NOT_FOUND
     record.edit_phone(old_phone, new_phone)
-    return f"Контакт оновлено. Новий запис:\n{record}"
+    return render_record(record, title="Контакт оновлено.")
 
 
 @input_error
@@ -78,7 +116,7 @@ def edit_email(args: list[str], book: AddressBook, **kwargs) -> str:
     if record is None:
         return CONTACT_NOT_FOUND
     record.edit_email(old_email, new_email)
-    return f"Контакт оновлено. Новий запис:\n{record}"
+    return render_record(record, title="Контакт оновлено.")
 
 
 @input_error
@@ -119,7 +157,7 @@ def edit_birthday(args: list[str], book: AddressBook, **kwargs) -> str:
     if record is None:
         return CONTACT_NOT_FOUND
     record.edit_birthday(birthday)
-    return f"День народження оновлено. Новий запис:\n{record}"
+    return render_record(record, title="День народження оновлено.")
 
 
 @input_error
@@ -133,7 +171,7 @@ def edit_address(args: list[str], book: AddressBook, **kwargs) -> str:
     if record is None:
         return CONTACT_NOT_FOUND
     record.edit_address(address)
-    return f"Адресу оновлено. Новий запис:\n{record}"
+    return render_record(record, title="Адресу оновлено.")
 
 
 @input_error
@@ -201,7 +239,22 @@ def find_contact(args: list[str], book: AddressBook) -> str:
     if not result:
         return CONTACT_NOT_FOUND
 
-    return "\n".join(str(record) for record in result)
+    table = Table(title="Found Contacts", box=box.ROUNDED)
+    table.add_column("Name", style="cyan", header_style="bold cyan")
+    table.add_column("Phone", style="dark_orange3", header_style="bold dark_orange3")
+    table.add_column("Email", style="yellow", header_style="bold yellow")
+    table.add_column("Birthday", justify="center", style="green", header_style="bold green")
+    table.add_column("Address", style="blue", header_style="bold blue")
+
+    for record in sorted(result, key=lambda x: x.name.value.lower()):
+        name = record.name.value
+        phone = ", ".join(p.value for p in record.phones) or "-"
+        email = ", ".join(e.value for e in record.emails) or "-"
+        birthday = record.birthday.value if record.birthday else "-"
+        address = record.address.value if record.address else "-"
+        table.add_row(name, phone, email, birthday, address)
+
+    return table
 
 
 @input_error
@@ -220,8 +273,7 @@ def add_note(args: list[str], notebook: Notebook, **kwargs) -> str:
     text = args[0]
     tags = args[1:] if len(args) > 1 else []
     note = notebook.add_note(text, tags)
-    tags_str = ", ".join(tags) if tags else NOT_SPECIFIED
-    return f"📝 Нотатку #{note.id} {note.text} додано. Теги: {tags_str}"
+    return render_notes([note], title="📝 Нотатку додано.")
 
 
 @input_error
@@ -233,7 +285,8 @@ def edit_note(args: list[str], notebook: Notebook, **kwargs) -> str:
         return "ID має бути числом."
     new_text = args[1]
     if notebook.edit_note(note_id, new_text):
-        return f"Нотатку #{note_id} {new_text} оновлено."
+        note = notebook._notes.get(note_id)
+        return render_notes([note], title="Нотатку оновлено.")
     return NOTE_NOT_FOUND
 
 
@@ -253,14 +306,12 @@ def edit_tag(args: list[str], notebook: Notebook, **kwargs) -> str:
 
     if action == "add":
         added = [t for t in tags_input if note.add_tag(t)]
-        return (f"Додано: {', '.join(added)} → #{note_id} "
-                f"{note.text} [Теги: {', '.join(note.tags)}]")
+        return render_notes([note], title="Теги додано.")
     elif action == "delete":
         if len(tags_input) != 1:
             return "Вкажіть лише один тег для видалення."
         if note.delete_tag(tags_input[0]):
-            return (f"Видалено '{tags_input[0]}' з #{note_id} "
-                    f"{note.text} [Теги: {', '.join(note.tags)}]")
+            return render_notes([note], title="Тег видалено.")
         return f"Тег '{tags_input[0]}' не знайдено."
     return "Дія має бути 'add' або 'delete'."
 
@@ -284,8 +335,7 @@ def find_note(args: list[str], notebook: Notebook, **kwargs) -> str:
     matches = notebook.find(query)
     if not matches:
         return NOTE_NOT_FOUND
-    return "\n".join(f"#{n.id}: {n.text} [Теги: {', '.join(n.tags)}]"
-                     for n in matches)
+    return render_notes(matches, title="Found Notes")
 
 
 @input_error
@@ -295,13 +345,4 @@ def all_notes(notebook: Notebook, **kwargs) -> str:
     if not notes:
         return NO_NOTES
 
-    table = Table(title="Notebook", box=box.ROUNDED)
-    table.add_column("ID", justify="right", style="cyan", header_style="bold cyan")
-    table.add_column("Notes", style="green", header_style="bold green")
-    table.add_column("Tags", style="dark_orange3", header_style="bold dark_orange3")
-
-    for n in notes:
-        tags_str = (", ".join(f"#{tag}" for tag in n.tags)
-                    if n.tags else NOT_SPECIFIED)
-        table.add_row(str(n.id), n.text, tags_str)
-    return table
+    return render_notes(notes, title="Notebook")
