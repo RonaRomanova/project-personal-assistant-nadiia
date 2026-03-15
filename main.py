@@ -17,7 +17,11 @@ from cli import (
     all_notes, # додано для нотаток
 )
 from storage import load_book, load_notes, save_book, save_notes
+from utils.helpers import print_ukrainian_flag
+from rich import print
+from rich.console import Console
 
+console = Console()
 
 def main() -> None:
     """
@@ -26,13 +30,15 @@ def main() -> None:
     book = load_book()
     notes = load_notes()
 
-    print(" \nПривіт. Я — Personal Assistant 'NADIIA2'!\n\n" \
+    print_ukrainian_flag()
+
+    print("Привіт. Я — Personal Assistant [bold magenta]NADIIA2[/bold magenta] 🦄!\n\n" \
           
-          "Я не зміню твоє життя за 3 секунди, не пообіцяю “AI magic” і не буду вдавати з себе iPhone 27 Pro Max.\n" \
+          "Я не зміню твоє життя за 3 секунди, не пообіцяю “AI magic” і не буду вдавати з себе 🍎 [i cyan]iPhone 27 Pro Max[/i cyan].\n" \
           "Я просто допоможу тобі з організацією твоїх контактів, введи 'help' щоб побачити всі доступні команди.")
 
     while True:
-        user_input = input("\n >>>>>> Введіть команду: ")
+        user_input = console.input("\n [bold magenta]>>>>>> Введіть команду:[/bold magenta] ")
         command, args, kwargs = parse_input(user_input)
 
         if command in ["close", "exit"]:

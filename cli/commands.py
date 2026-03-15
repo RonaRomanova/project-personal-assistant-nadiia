@@ -220,25 +220,27 @@ def find_contact(args: list[str], book: AddressBook) -> str:
     result = set()
     
     name = arguments.get("name") or args[0] if args else None
-    result.add(book.find(name))
+    if name:
+        matches = book.search_by_name(name)
+        for match in matches:
+            result.add(match)
     
     phone = arguments.get("phone")
     if phone:
         for record in book.data.values():
-            if any(p.value == phone for p in record.phones):
+            if any(phone in p.value for p in record.phones):
                 result.add(record)
     
     email = arguments.get("email")
-    result.add(book.find(email))
     if email:
         for record in book.data.values():
-            if any(e.value == email for e in record.emails):
+            if any(email.lower() in e.value.lower() for e in record.emails):
                 result.add(record)
 
     address = arguments.get("address")
     if address:
         for record in book.data.values():
-            if record.address and record.address.value.lower() == address.lower():
+            if record.address and address.lower() in record.address.value.lower():
                 result.add(record)
 
     if None in result:

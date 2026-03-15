@@ -1,31 +1,62 @@
-import pickle
-
-from contacts import AddressBook
-from notes import Notebook
 import json
 from pathlib import Path
+
+from contacts import AddressBook
+from contacts.record import Record
+from notes import Notebook
 from notes.note import Note
 
-DEFAULT_FILENAME = "addressbook.pkl"
+DEFAULT_FILENAME = "addressbook.json"
 
 def save_book(book: AddressBook, filename: str = DEFAULT_FILENAME) -> None:
     """
-    Зберігає адресну книгу у файл за допомогою pickle.
+    Зберігає адресну книгу у файл у форматі JSON.
     """
-    with open(filename, "wb") as file:
-        pickle.dump(book, file)
+    data = []
+    for record in book.data.values():
+        data.append({
+            "name": record.name.value,
+            "address": record.address.value if record.address else None,
+            "phones": [p.value for p in record.phones],
+            "emails": [e.value for e in record.emails],
+            "birthday": record.birthday.value if record.birthday else None,
+        })
+    with open(filename, "w", encoding="utf-8") as file:
+        json.dump(data, file, ensure_ascii=False, indent=2)
 
 
 def load_book(filename: str = DEFAULT_FILENAME) -> AddressBook:
     """
-    Завантажує адресну книгу з файлу за допомогою pickle.
+    Завантажує адресну книгу з файлу у форматі JSON.
     Якщо файл не знайдено, повертає нову порожню адресну книгу.
     """
+    book = AddressBook()
     try:
-        with open(filename, "rb") as file:
-            return pickle.load(file)
-    except (FileNotFoundError, AttributeError):
-        return AddressBook()
+        with open(filename, "r", encoding="utf-8") as file:
+            data = json.load(file)
+            for item in data:
+                record = Record(item["name"])
+                if item.get("address"):
+                    record.edit_address(item["address"])
+                for phone in item.get("phones", []):
+                    try:
+                        record.add_phone(phone)
+                    except ValueError:
+                        pass
+                for email in item.get("emails", []):
+                    try:
+                        record.add_email(email)
+                    except ValueError:
+                        pass
+                if item.get("birthday"):
+                    try:
+                        record.edit_birthday(item["birthday"])
+                    except ValueError:
+                        pass
+                book.add_record(record)
+    except (FileNotFoundError, json.JSONDecodeError):
+        pass
+    return book
 
 
 

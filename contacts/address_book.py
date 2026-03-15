@@ -16,9 +16,16 @@ class AddressBook(UserDict):
 
     def find(self, name: str) -> Record | None:
         """
-        Знаходить запис за ім'ям.
+        Знаходить запис за ім'ям (точний збіг).
         """
         return self.data.get(name)
+        
+    def search_by_name(self, partial_name: str) -> list[Record]:
+        """
+        Знаходить записи, ім'я яких містить заданий рядок (без урахування регістру).
+        """
+        return [record for name, record in self.data.items() 
+                if partial_name.lower() in name.lower()]
 
     def delete(self, name: str) -> None:
         """
