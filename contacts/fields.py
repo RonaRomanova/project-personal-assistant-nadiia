@@ -140,7 +140,7 @@ class Email(Field):
 
         if "@" not in email:
             raise ValueError(
-                "Email має містити символ '@' " "в форматі 'user@domain.com'."
+                "Email має містити символ '@' в форматі 'user@domain.com'."
             )
 
         local, domain = email.rsplit("@", 1)
