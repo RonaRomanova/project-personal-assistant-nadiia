@@ -2,6 +2,10 @@
 Constants for UI and command handling.
 """
 
+import re
+
+AUTOCOMPLETE_PATTERN = re.compile(r"([a-zA-Z0-9_-]+)")
+
 HELP_TEXT = (
     "\n[bold underline magenta]🌟 ПЕРСОНАЛЬНИЙ ПОМІЧНИК: "
     "ПОВНЕ КЕРІВНИЦТВО 🌟[/bold underline magenta]\n\n"
@@ -40,8 +44,9 @@ HELP_TEXT = (
     "    [dim]Формат:[/dim] [white]find-contact <запит> \\[phone=...] "
     "\\[email=...] \\[address=...] \\[birthday=...][/white]\n"
     "    [dim]Приклад:[/dim] [yellow]find-contact 'Elon'[/yellow]\n\n"
-    "  [green]• birthdays[/green] - [i]Іменинники на найближчі 7 днів.[/i]\n"
-    "    [dim]Формат:[/dim] [white]birthdays[/white]\n\n"
+    "  [green]• birthdays[/green] - [i]Іменинники на найближчий період "
+    "(7 днів за замовчуванням).[/i]\n"
+    "    [dim]Формат:[/dim] [white]birthdays \\[дні][/white]\n\n"
     "  [green]• delete-contact[/green] - [i]Видалення контакту.[/i]\n"
     "    [dim]Формат:[/dim] [white]delete-contact <Ім'я>[/white]\n"
     "    [dim]Приклад:[/dim] [yellow]delete-contact 'Elon Musk'[/yellow]\n\n"

@@ -116,3 +116,11 @@ def load_notes() -> Notebook:
         f"Notes loaded from {NOTES_FILE}. Count: {len(notebook._notes)}"
     )
     return notebook
+
+
+def get_storage_info() -> dict[str, str]:
+    """Повертає абсолютні шляхи до файлів зберігання у форматі URL."""
+    return {
+        "addressbook": f"file://{Path(DEFAULT_FILENAME).absolute()}",
+        "notes": f"file://{NOTES_FILE.absolute()}",
+    }

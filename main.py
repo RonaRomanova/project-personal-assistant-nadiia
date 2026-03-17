@@ -9,6 +9,7 @@ from rich.console import Console
 
 import cli
 from cli.constants import (
+    AUTOCOMPLETE_PATTERN,
     EXIT_MSG,
     HELP_PROMPT,
     HELP_TEXT,
@@ -16,7 +17,13 @@ from cli.constants import (
     UNKNOWN_COMMAND,
     WELCOME_MSG,
 )
-from storage import load_book, load_notes, save_book, save_notes
+from storage import (
+    get_storage_info,
+    load_book,
+    load_notes,
+    save_book,
+    save_notes,
+)
 from utils.helpers import print_ukrainian_flag
 from utils.logger import setup_logger
 
@@ -87,7 +94,9 @@ def main() -> None:
 
     # Список команд для автозаповнення
     command_list = list(commands.keys()) + ["close", "exit"]
-    word_completer = WordCompleter(command_list, ignore_case=True)
+    word_completer = WordCompleter(
+        command_list, ignore_case=True, pattern=AUTOCOMPLETE_PATTERN
+    )
 
     @Condition
     def is_not_after_space():
@@ -124,6 +133,10 @@ def main() -> None:
 
             if command in ["close", "exit"]:
                 logger.info("Application exit requested")
+                storage_info = get_storage_info()
+                print("\n[dim]Дані збережено у:[/dim]")
+                print(f"[dim]📁 {storage_info['addressbook']}[/dim]")
+                print(f"[dim]📓 {storage_info['notes']}[/dim]\n")
                 print(EXIT_MSG)
                 break
 

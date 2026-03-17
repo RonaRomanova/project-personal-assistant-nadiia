@@ -4,6 +4,8 @@ from datetime import date, timedelta
 from .constants import UKRAINIAN_DATE_FORMAT
 from .record import Record
 
+DEFAULT_DAYS_FOR_BIRTHDAYS = 7
+
 
 class AddressBook(UserDict):
     """
@@ -61,10 +63,12 @@ class AddressBook(UserDict):
         except ValueError:
             return birthday.replace(year=year, day=28)
 
-    def get_upcoming_birthdays(self) -> list[dict[str, str]]:
+    def get_upcoming_birthdays(
+        self, days=DEFAULT_DAYS_FOR_BIRTHDAYS
+    ) -> list[dict[str, str]]:
         """
         Повертає список користувачів, яких потрібно
-        привітати протягом наступного тижня.
+        привітати протягом вказаного періоду (за замовчуванням 7 днів).
         """
         today = date.today()
         upcoming_birthdays = []
@@ -84,7 +88,7 @@ class AddressBook(UserDict):
 
             days_difference = (birthday_this_year - today).days
 
-            if 0 <= days_difference <= 7:
+            if 0 <= days_difference <= days:
                 congratulation_date = birthday_this_year
 
                 if congratulation_date.weekday() >= 5:
@@ -93,9 +97,14 @@ class AddressBook(UserDict):
                         days=days_to_monday
                     )
 
+                bday_date = record.birthday.date_value
                 upcoming_birthdays.append(
                     {
                         "name": record.name.value,
+                        "original_birthday": bday_date.strftime(
+                            UKRAINIAN_DATE_FORMAT
+                        ),
+                        "age": birthday_this_year.year - bday_date.year,
                         "congratulation_date": congratulation_date.strftime(
                             UKRAINIAN_DATE_FORMAT
                         ),

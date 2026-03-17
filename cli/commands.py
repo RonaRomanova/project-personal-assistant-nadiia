@@ -193,16 +193,36 @@ def edit_address(args: list[str], book: AddressBook, **kwargs) -> str:
 @input_error
 def birthdays(args: list[str], book: AddressBook, **kwargs) -> str:
     """Показує найближчі дні народження у вигляді таблиці."""
+    days = 7
+    if args:
+        try:
+            days = int(args[0])
+            if days <= 0 or days > 365:
+                raise ValueError
+        except ValueError:
+            error_msg = "Параметр 'days' має бути числом від 1 до 365."
+            logger.error(f"Validation error in birthdays command: {error_msg}")
+            return error_msg
+
     upcoming = sorted(
-        book.get_upcoming_birthdays(), key=lambda x: x["name"].lower()
+        book.get_upcoming_birthdays(days), key=lambda x: x["name"].lower()
     )
     if not upcoming:
-        return "Немає днів народження на наступний тиждень."
+        return f"Немає днів народження на наступні {days} днів."
 
-    table = Table(title="Upcoming Birthdays", box=box.ROUNDED)
+    table = Table(title=f"Upcoming Birthdays ({days} days)", box=box.ROUNDED)
     table.add_column("Name", style="cyan", header_style="bold cyan")
     table.add_column(
         "Birthday", justify="center", style="green", header_style="bold green"
+    )
+    table.add_column(
+        "Age", justify="center", style="magenta", header_style="bold magenta"
+    )
+    table.add_column(
+        "Next Birthday",
+        justify="center",
+        style="blue",
+        header_style="bold blue",
     )
     table.add_column(
         "Days Left",
@@ -215,11 +235,13 @@ def birthdays(args: list[str], book: AddressBook, **kwargs) -> str:
 
     for item in upcoming:
         name = item["name"]
+        orig_bday = item["original_birthday"]
+        age = str(item["age"])
         date_str = item["congratulation_date"]
         date_obj = datetime.strptime(date_str, UKRAINIAN_DATE_FORMAT).date()
         days_left = str((date_obj - today).days)
 
-        table.add_row(name, date_str, days_left)
+        table.add_row(name, orig_bday, age, date_str, days_left)
 
     return table
 
