@@ -1,36 +1,37 @@
 from datetime import datetime
 from typing import List
 
-from rich.table import Table
 from rich import box
+from rich.table import Table
 
 from cli.validators import input_error
 from contacts import AddressBook
+from contacts.constants import (
+    CONTACT_NOT_FOUND,
+    NO_NOTES,
+    NOT_SPECIFIED,
+    NOTE_NOT_FOUND,
+    UKRAINIAN_DATE_FORMAT,
+)
 from contacts.record import Record
 from notes.note import Note
 from notes.notebook import Notebook
-from contacts.constants import (
-    UKRAINIAN_DATE_FORMAT,
-    NOT_SPECIFIED,
-    NO_NOTES,
-    CONTACT_NOT_FOUND,
-    NOTE_NOT_FOUND,
-    TABLE_NAME_MAX_WIDTH,
-    TABLE_PHONE_MAX_WIDTH,
-    TABLE_EMAIL_MAX_WIDTH,
-    TABLE_ADDRESS_MAX_WIDTH,
-    TABLE_NOTE_MAX_WIDTH,
-    TABLE_UPCOMING_NAME_MAX_WIDTH,
-)
+from utils.logger import get_logger
+
+logger = get_logger()
 
 
 def render_record(record: Record, title: str = None) -> Table:
     """Створює Rich Table для відображення одного або декількох контактів."""
     table = Table(title=title, box=box.ROUNDED)
     table.add_column("Name", style="cyan", header_style="bold cyan")
-    table.add_column("Phone", style="dark_orange3", header_style="bold dark_orange3")
+    table.add_column(
+        "Phone", style="dark_orange3", header_style="bold dark_orange3"
+    )
     table.add_column("Email", style="yellow", header_style="bold yellow")
-    table.add_column("Birthday", justify="center", style="green", header_style="bold green")
+    table.add_column(
+        "Birthday", justify="center", style="green", header_style="bold green"
+    )
     table.add_column("Address", style="blue", header_style="bold blue")
 
     name = record.name.value
@@ -49,13 +50,18 @@ def render_notes(notes: List[Note], title: str = None) -> Table:
         return title or "Нотаток не знайдено."
 
     table = Table(title=title, box=box.ROUNDED)
-    table.add_column("ID", justify="right", style="cyan", header_style="bold cyan")
+    table.add_column(
+        "ID", justify="right", style="cyan", header_style="bold cyan"
+    )
     table.add_column("Notes", style="green", header_style="bold green")
-    table.add_column("Tags", style="dark_orange3", header_style="bold dark_orange3")
+    table.add_column(
+        "Tags", style="dark_orange3", header_style="bold dark_orange3"
+    )
 
     for n in notes:
-        tags_str = (", ".join(f"#{tag}" for tag in n.tags)
-                    if n.tags else NOT_SPECIFIED)
+        tags_str = (
+            ", ".join(f"#{tag}" for tag in n.tags) if n.tags else NOT_SPECIFIED
+        )
         table.add_row(str(n.id), n.text, tags_str)
     return table
 
@@ -94,6 +100,9 @@ def add_contact(args: list[str], book: AddressBook, **kwargs) -> str:
     if birthday:
         record.edit_birthday(birthday)
 
+    logger.info(
+        f"Command add-contact executed for '{name}'. Result: {message}"
+    )
     return render_record(record, title=message)
 
 
@@ -105,6 +114,7 @@ def edit_phone(args: list[str], book: AddressBook, **kwargs) -> str:
     if record is None:
         return CONTACT_NOT_FOUND
     record.edit_phone(old_phone, new_phone)
+    logger.info(f"Phone edited for '{name}': {old_phone} -> {new_phone}")
     return render_record(record, title="Контакт оновлено.")
 
 
@@ -130,12 +140,18 @@ def show_all(book: AddressBook, **kwargs) -> str:
 
     table = Table(title="All Contacts", box=box.ROUNDED)
     table.add_column("Name", style="cyan", header_style="bold cyan")
-    table.add_column("Phone", style="dark_orange3", header_style="bold dark_orange3")
+    table.add_column(
+        "Phone", style="dark_orange3", header_style="bold dark_orange3"
+    )
     table.add_column("Email", style="yellow", header_style="bold yellow")
-    table.add_column("Birthday", justify="center", style="green", header_style="bold green")
+    table.add_column(
+        "Birthday", justify="center", style="green", header_style="bold green"
+    )
     table.add_column("Address", style="blue", header_style="bold blue")
 
-    for record in sorted(book.data.values(), key=lambda x: x.name.value.lower()):
+    for record in sorted(
+        book.data.values(), key=lambda x: x.name.value.lower()
+    ):
         name = record.name.value
         phones_list = list(record.phones)
         phone = ", ".join(p.value for p in phones_list) or "-"
@@ -177,14 +193,23 @@ def edit_address(args: list[str], book: AddressBook, **kwargs) -> str:
 @input_error
 def birthdays(args: list[str], book: AddressBook, **kwargs) -> str:
     """Показує найближчі дні народження у вигляді таблиці."""
-    upcoming = sorted(book.get_upcoming_birthdays(), key=lambda x: x["name"].lower())
+    upcoming = sorted(
+        book.get_upcoming_birthdays(), key=lambda x: x["name"].lower()
+    )
     if not upcoming:
         return "Немає днів народження на наступний тиждень."
 
     table = Table(title="Upcoming Birthdays", box=box.ROUNDED)
     table.add_column("Name", style="cyan", header_style="bold cyan")
-    table.add_column("Birthday", justify="center", style="green", header_style="bold green")
-    table.add_column("Days Left", justify="right", style="dark_orange3", header_style="bold dark_orange3")
+    table.add_column(
+        "Birthday", justify="center", style="green", header_style="bold green"
+    )
+    table.add_column(
+        "Days Left",
+        justify="right",
+        style="dark_orange3",
+        header_style="bold dark_orange3",
+    )
 
     today = datetime.now().date()
 
@@ -204,11 +229,11 @@ def find_contact(args: list[str], book: AddressBook) -> str:
     """Знаходить контакт за ім'ям, телефоном або адресою."""
     arguments = {}
     general_query = None
-    
+
     if args:
         # Провіряємо, чи є в аргументах хоча б один ключ-значення (key=value)
         has_keys = any("=" in arg for arg in args)
-        
+
         if not has_keys:
             general_query = args[0]
         else:
@@ -220,7 +245,7 @@ def find_contact(args: list[str], book: AddressBook) -> str:
                     arguments["name"] = arg
 
     result = set()
-    
+
     if general_query:
         result.update(book.search(general_query))
     else:
@@ -237,13 +262,18 @@ def find_contact(args: list[str], book: AddressBook) -> str:
         email = arguments.get("email")
         if email:
             for record in book.data.values():
-                if any(email.lower() in e.value.lower() for e in record.emails):
+                if any(
+                    email.lower() in e.value.lower() for e in record.emails
+                ):
                     result.add(record)
 
         address = arguments.get("address")
         if address:
             for record in book.data.values():
-                if record.address and address.lower() in record.address.value.lower():
+                if (
+                    record.address
+                    and address.lower() in record.address.value.lower()
+                ):
                     result.add(record)
 
     if None in result:
@@ -254,9 +284,13 @@ def find_contact(args: list[str], book: AddressBook) -> str:
 
     table = Table(title="Found Contacts", box=box.ROUNDED)
     table.add_column("Name", style="cyan", header_style="bold cyan")
-    table.add_column("Phone", style="dark_orange3", header_style="bold dark_orange3")
+    table.add_column(
+        "Phone", style="dark_orange3", header_style="bold dark_orange3"
+    )
     table.add_column("Email", style="yellow", header_style="bold yellow")
-    table.add_column("Birthday", justify="center", style="green", header_style="bold green")
+    table.add_column(
+        "Birthday", justify="center", style="green", header_style="bold green"
+    )
     table.add_column("Address", style="blue", header_style="bold blue")
 
     for record in sorted(result, key=lambda x: x.name.value.lower()):
@@ -277,6 +311,7 @@ def delete_contact(args: list[str], book: AddressBook) -> str:
     """
     name = args[0]
     book.delete(name)
+    logger.info(f"Contact '{name}' deleted")
     return f"Контакт {name} видалено."
 
 
@@ -286,6 +321,7 @@ def add_note(args: list[str], notebook: Notebook, **kwargs) -> str:
     text = args[0]
     tags = args[1:] if len(args) > 1 else []
     note = notebook.add_note(text, tags)
+    logger.info(f"Note added with ID {note.id}. Tags: {tags}")
     return render_notes([note], title="📝 Нотатку додано.")
 
 
@@ -299,6 +335,7 @@ def edit_note(args: list[str], notebook: Notebook, **kwargs) -> str:
     new_text = args[1]
     if notebook.edit_note(note_id, new_text):
         note = notebook._notes.get(note_id)
+        logger.info(f"Note #{note_id} updated.")
         return render_notes([note], title="Нотатку оновлено.")
     return NOTE_NOT_FOUND
 
@@ -318,7 +355,8 @@ def edit_tag(args: list[str], notebook: Notebook, **kwargs) -> str:
         return f"Нотатку #{note_id} не знайдено."
 
     if action == "add":
-        added = [t for t in tags_input if note.add_tag(t)]
+        for t in tags_input:
+            note.add_tag(t)
         return render_notes([note], title="Теги додано.")
     elif action == "delete":
         if len(tags_input) != 1:
@@ -337,22 +375,25 @@ def delete_note(args: list[str], notebook: Notebook, **kwargs) -> str:
     except (ValueError, IndexError):
         return "ID має бути числом."
     if notebook.delete_note(note_id):
+        logger.info(f"Note #{note_id} deleted.")
         return f"Нотатку #{note_id} видалено."
     return NOTE_NOT_FOUND
 
 
 @input_error
 def find_note(args: list[str], notebook: Notebook, **kwargs) -> str:
-    """Шукає нотатки за текстом, тегами або використовуючи ключі tag=, text=."""
+    """
+    Шукає нотатки за текстом, тегами або використовуючи ключі tag=, text=.
+    """
     if not args:
         return "Вкажіть запит для пошуку."
 
     arguments = {}
     general_query = None
-    
+
     # Провіряємо, чи є в аргументах хоча б один ключ-значення (key=value)
     has_keys = any("=" in arg for arg in args)
-    
+
     if not has_keys:
         general_query = args[0]
     else:
@@ -366,18 +407,19 @@ def find_note(args: list[str], notebook: Notebook, **kwargs) -> str:
                     arguments["text"] = arg
 
     result = []
-    
+
     if general_query:
         result = notebook.find(general_query)
     else:
         tag_query = arguments.get("tag")
         text_query = arguments.get("text")
-        
+
         if tag_query and text_query:
-            # Об'єднуємо результати пошуку за тегами та текстом, видаляючи дублікати за ID
+            # Об'єднуємо результати пошуку за тегами та текстом,
+            # видаляючи дублікати за ID
             res_tags = notebook.search_by_tag(tag_query)
             res_text = notebook.search_by_text(text_query)
-            
+
             seen_ids = set()
             result = []
             for n in res_tags + res_text:
@@ -391,7 +433,7 @@ def find_note(args: list[str], notebook: Notebook, **kwargs) -> str:
 
     if not result:
         return NOTE_NOT_FOUND
-        
+
     return render_notes(result, title="Found Notes")
 
 

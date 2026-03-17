@@ -39,7 +39,11 @@ class Notebook:
     def search_by_tag(self, tag_query: str) -> List[Note]:
         """Пошук нотаток тільки за тегами."""
         q = tag_query.lower()
-        return [n for n in self._notes.values() if any(q in t.lower() for t in n.tags)]
+        return [
+            n
+            for n in self._notes.values()
+            if any(q in t.lower() for t in n.tags)
+        ]
 
     def search_by_text(self, text_query: str) -> List[Note]:
         """Пошук нотаток тільки за текстом."""

@@ -3,7 +3,7 @@ Centralized constants for the contacts module.
 """
 
 # Regex patterns
-PHONE_REGEX = r"[^\d\+]" # only digits and plus sign
+PHONE_REGEX = r"[^\d\+]"  # only digits and plus sign
 DIGITS_ONLY_REGEX = r"\D"
 EMAIL_REGEX = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
 

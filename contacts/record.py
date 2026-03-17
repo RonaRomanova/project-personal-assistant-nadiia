@@ -1,5 +1,5 @@
-from .fields import Address, Birthday, Email, Name, Phone
 from .constants import NOT_SPECIFIED
+from .fields import Address, Birthday, Email, Name, Phone
 
 
 class Record:

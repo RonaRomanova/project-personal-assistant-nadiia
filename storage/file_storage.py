@@ -5,6 +5,9 @@ from contacts import AddressBook
 from contacts.record import Record
 from notes import Notebook
 from notes.note import Note
+from utils.logger import get_logger
+
+logger = get_logger()
 
 DEFAULT_FILENAME = "addressbook.json"
 
@@ -24,8 +27,12 @@ def save_book(book: AddressBook, filename: str = DEFAULT_FILENAME) -> None:
                 "birthday": record.birthday.value if record.birthday else None,
             }
         )
-    with open(filename, "w", encoding="utf-8") as file:
-        json.dump(data, file, ensure_ascii=False, indent=2)
+    try:
+        with open(filename, "w", encoding="utf-8") as file:
+            json.dump(data, file, ensure_ascii=False, indent=2)
+        logger.info(f"Address book saved to {filename}")
+    except Exception as e:
+        logger.error(f"Error saving address book: {e}", exc_info=True)
 
 
 def load_book(filename: str = DEFAULT_FILENAME) -> AddressBook:
@@ -57,7 +64,13 @@ def load_book(filename: str = DEFAULT_FILENAME) -> AddressBook:
                     except ValueError:
                         pass
                 book.add_record(record)
-    except (FileNotFoundError, json.JSONDecodeError):
+        logger.info(
+            f"Address book loaded from {filename}. Records: {len(book.data)}"
+        )
+    except FileNotFoundError:
+        logger.info(f"Address book file {filename} not found.")
+    except Exception as e:
+        logger.error(f"Error loading address book: {e}", exc_info=True)
         pass
     return book
 
@@ -76,7 +89,11 @@ def save_notes(notebook: Notebook) -> None:
         }
         for n in notebook.all_notes()
     ]
-    NOTES_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+    try:
+        NOTES_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2))
+        logger.info(f"Notes saved to {NOTES_FILE}")
+    except Exception as e:
+        logger.error(f"Error saving notes: {e}", exc_info=True)
 
 
 def load_notes() -> Notebook:
@@ -95,4 +112,7 @@ def load_notes() -> Notebook:
         notebook._notes[note.id] = note
         max_id = max(max_id, note.id)
     notebook._next_id = max_id + 1
+    logger.info(
+        f"Notes loaded from {NOTES_FILE}. Count: {len(notebook._notes)}"
+    )
     return notebook

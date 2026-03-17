@@ -2,15 +2,16 @@ import re
 from datetime import datetime
 
 from utils.helpers import parse_date
+
 from .constants import (
-    PHONE_REGEX,
+    DATE_FORMAT,
     DIGITS_ONLY_REGEX,
     EMAIL_REGEX,
-    DATE_FORMAT,
-    UKRAINE_COUNTRY_CODE,
-    MIN_PHONE_DIGITS,
     MAX_PHONE_DIGITS,
+    MIN_PHONE_DIGITS,
     NORMALIZED_PHONE_LENGTH,
+    PHONE_REGEX,
+    UKRAINE_COUNTRY_CODE,
 )
 
 
@@ -75,14 +76,16 @@ class Phone(Field):
             )
         if len(digits) > MAX_PHONE_DIGITS:
             raise ValueError(
-                f"Номер телефону має містити не більше {MAX_PHONE_DIGITS} цифр "
-                f"в форматі +{UKRAINE_COUNTRY_CODE}XXXXXXXXX."
+                f"Номер телефону має містити не більше "
+                f"{MAX_PHONE_DIGITS} цифр в форматі "
+                f"+{UKRAINE_COUNTRY_CODE}XXXXXXXXX."
             )
 
         if len(digits) == 12:
             if not digits.startswith(UKRAINE_COUNTRY_CODE):
                 raise ValueError(
-                    f"Номер з 12 цифр має починатися з коду {UKRAINE_COUNTRY_CODE}."
+                    f"Номер з 12 цифр має починатися з коду "
+                    f"{UKRAINE_COUNTRY_CODE}."
                 )
             normalized = "+" + digits
         else:
@@ -106,8 +109,9 @@ class Phone(Field):
 
         if len(normalized) != NORMALIZED_PHONE_LENGTH:
             raise ValueError(
-                "Внутрішня помилка нормалізації: отримано "
-                f"{len(normalized)} символів замість {NORMALIZED_PHONE_LENGTH}."
+                f"Внутрішня помилка нормалізації: отримано "
+                f"{len(normalized)} символів замість "
+                f"{NORMALIZED_PHONE_LENGTH}."
             )
 
         return normalized
@@ -136,8 +140,7 @@ class Email(Field):
 
         if "@" not in email:
             raise ValueError(
-                "Email має містити символ '@' "
-                "в форматі 'user@domain.com'."
+                "Email має містити символ '@' " "в форматі 'user@domain.com'."
             )
 
         local, domain = email.rsplit("@", 1)
@@ -177,7 +180,9 @@ class Birthday(Field):
                 parse_date(value), DATE_FORMAT
             ).date()
         except (ValueError, TypeError):
-            raise ValueError(f"Невірний формат дати. Використовуйте {DATE_FORMAT}")
+            raise ValueError(
+                f"Невірний формат дати. Використовуйте {DATE_FORMAT}"
+            )
 
         super().__init__(value)
         self.date_value = birthday_date

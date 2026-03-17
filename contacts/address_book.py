@@ -1,8 +1,8 @@
 from collections import UserDict
 from datetime import date, timedelta
 
-from .record import Record
 from .constants import UKRAINIAN_DATE_FORMAT
+from .record import Record
 
 
 class AddressBook(UserDict):
@@ -38,9 +38,7 @@ class AddressBook(UserDict):
         Знаходить записи за повнотекстовим пошуком по всіх полях.
         """
         return [
-            record
-            for record in self.data.values()
-            if record.matches(query)
+            record for record in self.data.values() if record.matches(query)
         ]
 
     def delete(self, name: str) -> None:

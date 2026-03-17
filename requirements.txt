@@ -1,10 +1,11 @@
 # Core Dependencies
 rich==13.7.0            # Для красивого, кольорового CLI інтерфейсу
 questionary==2.1.0      # Для інтерактивних CLI запитів та автодоповнення
-prompt_toolkit==3.0.45  # Для автодоповнення в prompt
+prompt_toolkit==3.0.52  # Для автодоповнення в prompt
 
 # Development & Testing Dependencies
 autopep8==2.1.1      # Для автоматичного форматування коду за PEP 8
 flake8==7.1.0        # Для лінтера та перевірки на PEP 8
 pytest==8.3.2        # Для тестів
 ruff==0.10.0         # Швидкий лінтер та форматер для Python
+pre-commit==3.7.1    # Для автоматизації перевірок перед комітом
