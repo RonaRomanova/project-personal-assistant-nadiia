@@ -90,12 +90,18 @@ edit-tag 1 delete плани
 # Список усіх нотаток з їхніми ID
 all-notes
 
-# Пошук за текстом
+# Пошук за текстом (повнотекстовий)
 find-note "подарунок"
 
 # Пошук за конкретним тегом
-find-note #work
-find-note #терміново
+find-note tag=work
+find-note tag=терміново
+
+# Пошук за конкретним текстом
+find-note text="звіт"
+
+# Складний пошук (тег + текст)
+find-note tag=work text="код"
 ```
 
 ### Delete Note

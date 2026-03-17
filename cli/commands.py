@@ -343,12 +343,56 @@ def delete_note(args: list[str], notebook: Notebook, **kwargs) -> str:
 
 @input_error
 def find_note(args: list[str], notebook: Notebook, **kwargs) -> str:
-    """Шукає нотатки за текстом або тегами."""
-    query = args[0]
-    matches = notebook.find(query)
-    if not matches:
+    """Шукає нотатки за текстом, тегами або використовуючи ключі tag=, text=."""
+    if not args:
+        return "Вкажіть запит для пошуку."
+
+    arguments = {}
+    general_query = None
+    
+    # Провіряємо, чи є в аргументах хоча б один ключ-значення (key=value)
+    has_keys = any("=" in arg for arg in args)
+    
+    if not has_keys:
+        general_query = args[0]
+    else:
+        for arg in args:
+            if "=" in arg:
+                key, value = arg.split("=", 1)
+                arguments[key.lower()] = value
+            else:
+                # Якщо є змішані аргументи, перший без '=' вважаємо текстом
+                if "text" not in arguments:
+                    arguments["text"] = arg
+
+    result = []
+    
+    if general_query:
+        result = notebook.find(general_query)
+    else:
+        tag_query = arguments.get("tag")
+        text_query = arguments.get("text")
+        
+        if tag_query and text_query:
+            # Об'єднуємо результати пошуку за тегами та текстом, видаляючи дублікати за ID
+            res_tags = notebook.search_by_tag(tag_query)
+            res_text = notebook.search_by_text(text_query)
+            
+            seen_ids = set()
+            result = []
+            for n in res_tags + res_text:
+                if n.id not in seen_ids:
+                    result.append(n)
+                    seen_ids.add(n.id)
+        elif tag_query:
+            result = notebook.search_by_tag(tag_query)
+        elif text_query:
+            result = notebook.search_by_text(text_query)
+
+    if not result:
         return NOTE_NOT_FOUND
-    return render_notes(matches, title="Found Notes")
+        
+    return render_notes(result, title="Found Notes")
 
 
 @input_error

@@ -30,8 +30,8 @@ HELP_TEXT = (
     "  [green]• all-contacts[/green] - [i]Відображення всіх контактів.[/i]\n"
     "    [dim]Формат:[/dim] [white]all-contacts[/white]\n\n"
     
-    "  [green]• find-contact[/green] - [i]Пошук контакту за будь-яким полем.[/i]\n"
-    "    [dim]Формат:[/dim] [white]find-contact <запит> \\[phone=...] \\[email=...] \\[address=...][/white]\n"
+    "  [green]• find-contact[/green] - [i]Повнотекстовий пошук за будь-яким полем або за ключами.[/i]\n"
+    "    [dim]Формат:[/dim] [white]find-contact <запит> \\[phone=...] \\[email=...] \\[address=...] \\[birthday=...][/white]\n"
     "    [dim]Приклад:[/dim] [yellow]find-contact 'Elon'[/yellow]\n\n"
     
     "  [green]• birthdays[/green] - [i]Іменинники на найближчі 7 днів.[/i]\n"
@@ -54,9 +54,9 @@ HELP_TEXT = (
     "    [dim]Формат:[/dim] [white]edit-tag <ID> <add|delete> <тег>[/white]\n"
     "    [dim]Приклад:[/dim] [yellow]edit-tag 1 add терміново[/yellow]\n\n"
     
-    "  [green]• find-note[/green] - [i]Пошук нотаток за змістом або тегом.[/i]\n"
-    "    [dim]Формат:[/dim] [white]find-note <запит>[/white]\n"
-    "    [dim]Приклад:[/dim] [yellow]find-note Марс[/yellow]\n\n"
+    "  [green]• find-note[/green] - [i]Пошук за змістом, тегом або ключами tag=, text=.[/i]\n"
+    "    [dim]Формат:[/dim] [white]find-note <запит> \\[tag=...] \\[text=...][/white]\n"
+    "    [dim]Приклад:[/dim] [yellow]find-note 'Марс' tag=важливо[/yellow]\n\n"
     
     "  [green]• all-notes[/green] - [i]Список усіх нотаток.[/i]\n"
     "    [dim]Формат:[/dim] [white]all-notes[/white]\n\n"
