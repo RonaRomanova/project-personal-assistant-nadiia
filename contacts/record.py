@@ -67,6 +67,21 @@ class Record:
     def edit_address(self, address: str) -> None:
         self.address = Address(address)
 
+    def matches(self, query: str) -> bool:
+        """Пошук по всім полям контакту."""
+        q = query.lower()
+        if q in self.name.value.lower():
+            return True
+        if any(q in p.value.lower() for p in self.phones):
+            return True
+        if any(q in e.value.lower() for e in self.emails):
+            return True
+        if self.address and q in self.address.value.lower():
+            return True
+        if self.birthday and q in self.birthday.value.lower():
+            return True
+        return False
+
     def __str__(self) -> str:
         phones_str = (
             "; ".join(p.value for p in self.phones)

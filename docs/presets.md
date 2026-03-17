@@ -2,7 +2,7 @@
 
 Use these examples to quickly interact with the Personal Assistant. You can copy and paste these into the prompt.
 
-## 👤 Contacts Management
+## Contacts Management
 
 ### Add or Update Contact
 ```bash
@@ -41,10 +41,12 @@ edit-address "Elon Musk" "Boca Chica, Texas"
 # Показати всі контакти
 all-contacts
 
-# Пошук за ім'ям (частина імені)
+# Повнотекстовий пошук (за ім'ям, телефоном, адресою, email тощо)
 find-contact "Nadiia"
+find-contact "Хрещатик"
+find-contact 099
 
-# Складний пошук за декількома полями
+# Складний пошук за конкретними полями
 find-contact "Elon" phone=099
 find-contact email=example.com
 
@@ -57,7 +59,7 @@ birthdays
 delete-contact "Nadiia Romanova"
 ```
 
-## 📝 Notes Management
+## Notes Management
 
 ### Add Note
 ```bash
@@ -102,7 +104,7 @@ find-note #терміново
 delete-note 1
 ```
 
-## ⚙️ System Commands
+## System Commands
 ```bash
 # Привітання
 hello

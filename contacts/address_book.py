@@ -33,6 +33,16 @@ class AddressBook(UserDict):
             if partial_name.lower() in name.lower()
         ]
 
+    def search(self, query: str) -> list[Record]:
+        """
+        Знаходить записи за повнотекстовим пошуком по всіх полях.
+        """
+        return [
+            record
+            for record in self.data.values()
+            if record.matches(query)
+        ]
+
     def delete(self, name: str) -> None:
         """
         Видаляє запис за ім'ям.

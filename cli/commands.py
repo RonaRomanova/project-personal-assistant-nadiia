@@ -203,35 +203,48 @@ def birthdays(args: list[str], book: AddressBook, **kwargs) -> str:
 def find_contact(args: list[str], book: AddressBook) -> str:
     """Знаходить контакт за ім'ям, телефоном або адресою."""
     arguments = {}
-    for arg in args:
-        if "=" in arg:
-            key, value = arg.split("=", 1)
-            arguments[key] = value
+    general_query = None
+    
+    if args:
+        # Провіряємо, чи є в аргументах хоча б один ключ-значення (key=value)
+        has_keys = any("=" in arg for arg in args)
+        
+        if not has_keys:
+            general_query = args[0]
         else:
-            arguments["name"] = arg
+            for arg in args:
+                if "=" in arg:
+                    key, value = arg.split("=", 1)
+                    arguments[key] = value
+                else:
+                    arguments["name"] = arg
 
     result = set()
-    name = arguments.get("name") or (args[0] if args else None)
-    if name:
-        result.update(book.search_by_name(name))
+    
+    if general_query:
+        result.update(book.search(general_query))
+    else:
+        name = arguments.get("name")
+        if name:
+            result.update(book.search_by_name(name))
 
-    phone = arguments.get("phone")
-    if phone:
-        for record in book.data.values():
-            if any(phone in p.value for p in record.phones):
-                result.add(record)
+        phone = arguments.get("phone")
+        if phone:
+            for record in book.data.values():
+                if any(phone in p.value for p in record.phones):
+                    result.add(record)
 
-    email = arguments.get("email")
-    if email:
-        for record in book.data.values():
-            if any(email.lower() in e.value.lower() for e in record.emails):
-                result.add(record)
+        email = arguments.get("email")
+        if email:
+            for record in book.data.values():
+                if any(email.lower() in e.value.lower() for e in record.emails):
+                    result.add(record)
 
-    address = arguments.get("address")
-    if address:
-        for record in book.data.values():
-            if record.address and address.lower() in record.address.value.lower():
-                result.add(record)
+        address = arguments.get("address")
+        if address:
+            for record in book.data.values():
+                if record.address and address.lower() in record.address.value.lower():
+                    result.add(record)
 
     if None in result:
         result.remove(None)
