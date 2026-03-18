@@ -8,6 +8,7 @@ from cli.validators import input_error
 from contacts import AddressBook
 from contacts.constants import (
     CONTACT_NOT_FOUND,
+    DATE_FORMAT,
     NO_NOTES,
     NOT_SPECIFIED,
     NOTE_NOT_FOUND,
@@ -16,7 +17,7 @@ from contacts.constants import (
 from contacts.record import Record
 from notes.note import Note
 from notes.notebook import Notebook
-from utils import get_logger
+from utils import get_logger, parse_date
 
 logger = get_logger()
 
@@ -297,7 +298,28 @@ def find_contact(args: list[str], book: AddressBook) -> str:
                     and address.lower() in record.address.value.lower()
                 ):
                     result.add(record)
+        birthday = arguments.get("birthday")
+        if birthday:
+            # Спроба нормалізувати дату та знайти точний збіг
+            normalized = parse_date(birthday)
+            if normalized:
+                try:
+                    search_date = datetime.strptime(
+                        normalized, DATE_FORMAT
+                    ).date()
+                    for record in book.data.values():
+                        if (
+                            record.birthday
+                            and record.birthday.date_value == search_date
+                        ):
+                            result.add(record)
+                except ValueError:
+                    pass
 
+            # Також шукаємо як звичайний рядок
+            for record in book.data.values():
+                if record.birthday and birthday in record.birthday.value:
+                    result.add(record)
     if None in result:
         result.remove(None)
 

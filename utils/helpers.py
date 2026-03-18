@@ -9,7 +9,7 @@ def parse_date(value: str) -> str | None:
     Підтримувані формати: DD.MM.YYYY, YYYY-MM-DD, DD/MM/YYYY, MM/DD/YYYY.
     Повертає нормалізований рядок або None, якщо жоден формат не підійшов.
     """
-    for fmt in ("%d.%m.%Y", DATE_FORMAT, "%d/%m/%Y", "%m/%d/%Y"):
+    for fmt in ("%d.%m.%Y", DATE_FORMAT, "%d/%m/%Y", "%m/%d/%Y", "%Y.%m.%d"):
         try:
             dt = datetime.strptime(value, fmt)
             return dt.strftime(DATE_FORMAT)

@@ -150,6 +150,7 @@ all-contacts
 
 # Пошук за ім'ям
 find-contact "Ella"
+find-contact "Alina"
 
 # Додати контакт з помилкою email
 add-contact "Alina" 0991238999 380991734998 email=alinaspacex.com birthday=28.03.1971 address="Ukrain, вул. Хрещатик,1"
