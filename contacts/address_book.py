@@ -20,9 +20,16 @@ class AddressBook(UserDict):
 
     def find(self, name: str) -> Record | None:
         """
-        Знаходить запис за ім'ям (точний збіг).
+        Знаходить запис за ім'ям.
         """
-        return self.data.get(name)
+        name = name.strip()
+        if name in self.data:
+            return self.data[name]
+
+        for key, record in self.data.items():
+            if key.lower() == name.lower():
+                return record
+        return None
 
     def search_by_name(self, partial_name: str) -> list[Record]:
         """
@@ -47,10 +54,17 @@ class AddressBook(UserDict):
         """
         Видаляє запис за ім'ям.
         """
+        name = name.strip()
         if name in self.data:
             del self.data[name]
-        else:
-            raise KeyError
+            return
+
+        for key in list(self.data.keys()):
+            if key.lower() == name.lower():
+                del self.data[key]
+                return
+
+        raise KeyError
 
     @staticmethod
     def _get_birthday_for_year(birthday: str, year: int) -> date:

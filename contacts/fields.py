@@ -32,7 +32,9 @@ class Name(Field):
     Клас для зберігання імені контакту.
     """
 
-    pass
+    def __init__(self, value: str) -> None:
+        stripped = value.strip()
+        super().__init__(stripped)
 
 
 class Address(Field):

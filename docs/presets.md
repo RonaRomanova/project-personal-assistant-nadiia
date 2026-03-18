@@ -5,6 +5,7 @@ Use these examples to quickly interact with the Personal Assistant. You can copy
 ## Contacts Management
 
 ### Add or Update Contact
+
 ```bash
 # Базовий приклад
 add-contact "Nadiia Romanova" 0931234567
@@ -21,6 +22,7 @@ add-contact "Elon Musk" address="Starbase, Texas"
 ```
 
 ### Edit Contact Details
+
 ```bash
 # Зміна старого номера на новий (+380 формат також підтримується)
 edit-phone "Nadiia Romanova" 0931234567 0937654321
@@ -37,6 +39,7 @@ edit-address "Elon Musk" "Boca Chica, Texas"
 ```
 
 ### Search and List
+
 ```bash
 # Показати всі контакти
 all-contacts
@@ -58,6 +61,7 @@ birthdays 30
 ```
 
 ### Delete Contact
+
 ```bash
 delete-contact "Nadiia Romanova"
 ```
@@ -65,6 +69,7 @@ delete-contact "Nadiia Romanova"
 ## Notes Management
 
 ### Add Note
+
 ```bash
 # Нотатка без тегів
 add-note "Забрати посилку о 18:00"
@@ -78,6 +83,7 @@ add-note "Review the project-personal-assistant code" #work #python
 ```
 
 ### Edit Note
+
 ```bash
 # Редагування тексту за ID (ID можна побачити в all-notes)
 edit-note 1 "Забрати посилку о 19:00 (перенесли)"
@@ -89,6 +95,7 @@ edit-tag 1 delete плани
 ```
 
 ### Search and List Notes
+
 ```bash
 # Список усіх нотаток з їхніми ID
 all-notes
@@ -108,12 +115,14 @@ find-note tag=work text="код"
 ```
 
 ### Delete Note
+
 ```bash
 # Видалення за ID
 delete-note 1
 ```
 
 ## System Commands
+
 ```bash
 # Привітання
 hello
@@ -123,4 +132,42 @@ help
 
 # Вихід (збереже дані та покаже шляхи до файлів JSON)
 exit
+```
+
+## Demo
+
+```bash
+# Привітання Welcome
+
+# Показати меню допомоги
+help
+
+# Додати контакт
+add-contact "Ella" 0991238999 380991734998 email=ella@spacex.com birthday=28.03.1971 address="Ukrain, вул. Хрещатик,1"
+
+# Показати всі контакти
+all-contacts
+
+# Пошук за ім'ям
+find-contact "Ella"
+
+# Додати контакт з помилкою email
+add-contact "Alina" 0991238999 380991734998 email=alinaspacex.com birthday=28.03.1971 address="Ukrain, вул. Хрещатик,1"
+
+# Додати нотатку
+add-note "Купити вітаміни і магній" shopping health
+add-note "Ідея для подкасту: чому зумери люблять CLI" idea
+
+# Показати всі нотатки
+all-notes
+
+# Пошук нотатки за словом "вітаніни"
+find-note "витаніни"
+
+# Показати найближчі дні народження
+birthdays 30
+
+# Вихід (збереже дані та покаже шляхи до файлів JSON)
+exit
+
 ```
