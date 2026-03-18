@@ -5,7 +5,7 @@ from collections import defaultdict
 from contacts.address_book import AddressBook
 from notes import Notebook
 from storage.file_storage import load_book, load_notes
-from utils.helpers import parse_date
+from utils import parse_date
 
 from .commands import (
     add_contact,

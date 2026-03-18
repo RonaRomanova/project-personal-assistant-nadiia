@@ -16,7 +16,7 @@ from contacts.constants import (
 from contacts.record import Record
 from notes.note import Note
 from notes.notebook import Notebook
-from utils.logger import get_logger
+from utils import get_logger
 
 logger = get_logger()
 

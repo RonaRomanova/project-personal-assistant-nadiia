@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 
-from utils.helpers import parse_date
+from utils import parse_date
 
 from .constants import (
     DATE_FORMAT,

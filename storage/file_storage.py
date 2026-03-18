@@ -5,7 +5,7 @@ from contacts import AddressBook
 from contacts.record import Record
 from notes import Notebook
 from notes.note import Note
-from utils.logger import get_logger
+from utils import get_logger
 
 logger = get_logger()
 

@@ -24,8 +24,7 @@ from storage import (
     save_book,
     save_notes,
 )
-from utils.helpers import print_ukrainian_flag
-from utils.logger import setup_logger
+from utils import print_ukrainian_flag, setup_logger
 
 console = Console()
 logger = setup_logger()

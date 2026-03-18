@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "personal-assistant-nadiia"
+version = "0.1.0"
+authors = [
+  { name = "Nadiia" },
+]
+description = "A personal assistant for managing contacts and notes."
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = ["assistant", "contacts", "notes", "cli"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "rich>=13.7.0",
+    "questionary>=2.1.0",
+    "prompt-toolkit>=3.0.52",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.2",
+    "ruff>=0.10.0",
+    "pre-commit>=3.7.1",
+]
+
+[project.scripts]
+nadiia = "main:main"
+
+[tool.setuptools]
+packages = ["cli", "contacts", "notes", "storage", "utils"]
+py-modules = ["main"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = []
