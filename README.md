@@ -139,10 +139,3 @@ pytest
 
 **Життєвий цикл задачі:**<br>
 `Розробка` → `Тестувальник` → `Pull Request` → `Code Review` → `Merge`
-
----
-
-## Корисні посилання
-
-- [Google Doc з вимогами/ТЗ](https://docs.google.com/document/d/1wiksgjxgH3s9s5ZzH8-WpYMi4or5L8XeeicnXfRO8dk/edit?tab=t.0)
-- [Agile Board (Trello)](https://trello.com/b/deW9VxgM/project-personal-assistant-nadiia)

@@ -1,4 +1,9 @@
+from datetime import date, timedelta
+
+import pytest
+
 from contacts.address_book import AddressBook
+from contacts.fields import Birthday
 from contacts.record import Record
 from notes.notebook import Notebook
 
@@ -35,3 +40,29 @@ def test_find_note():
     results = notebook.find("python")
     assert len(results) == 1
     assert "Python is great" in results[0].text
+
+
+def test_birthday_accepts_today_and_exactly_120_years_ago():
+    today = date.today()
+    earliest_allowed = Birthday._subtract_years(today, 120)
+
+    today_birthday = Birthday(today.isoformat())
+    earliest_birthday = Birthday(earliest_allowed.isoformat())
+
+    assert today_birthday.date_value == today
+    assert earliest_birthday.date_value == earliest_allowed
+
+
+def test_birthday_rejects_future_date():
+    tomorrow = date.today() + timedelta(days=1)
+
+    with pytest.raises(ValueError, match="не може бути пізнішою за сьогодні"):
+        Birthday(tomorrow.isoformat())
+
+
+def test_birthday_rejects_date_older_than_120_years():
+    today = date.today()
+    too_old = Birthday._subtract_years(today, 120) - timedelta(days=1)
+
+    with pytest.raises(ValueError, match="не може бути старішою за 120 років"):
+        Birthday(too_old.isoformat())

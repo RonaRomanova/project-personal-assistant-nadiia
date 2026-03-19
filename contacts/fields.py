@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import date, datetime
 
 from utils import parse_date
 
@@ -186,5 +186,25 @@ class Birthday(Field):
                 f"Невірний формат дати. Використовуйте {DATE_FORMAT}"
             )
 
+        today = date.today()
+        earliest_allowed_date = self._subtract_years(today, 120)
+
+        if birthday_date > today:
+            raise ValueError(
+                "Дата народження не може бути пізнішою за сьогодні."
+            )
+
+        if birthday_date < earliest_allowed_date:
+            raise ValueError(
+                "Дата народження не може бути старішою за 120 років."
+            )
+
         super().__init__(value)
         self.date_value = birthday_date
+
+    @staticmethod
+    def _subtract_years(source_date: date, years: int) -> date:
+        try:
+            return source_date.replace(year=source_date.year - years)
+        except ValueError:
+            return source_date.replace(year=source_date.year - years, day=28)
